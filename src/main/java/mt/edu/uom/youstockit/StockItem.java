@@ -38,6 +38,16 @@ public class StockItem
         return this.name;
     }
 
+    public void setCategory(String category)
+    {
+        this.category = category;
+    }
+
+    public String getCategory(String category)
+    {
+        return category;
+    }
+
     public boolean setDescription(String desc)
     {
         // Description can be up to 500 characters long
