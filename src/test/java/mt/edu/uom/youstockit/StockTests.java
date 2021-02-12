@@ -23,20 +23,36 @@ public class StockTests {
     }
 
     @Test
+    public void testSetNameWhenNameIs4CharactersLong()
+    {
+        // Exercise
+        String name = "1234";
+        boolean result = stockItem.setName(name);
+
+        // Verify (this name should be invalid)
+        Assertions.assertFalse(result);
+        // Name should not be set
+        Assertions.assertEquals(null, stockItem.getName());
+    }
+
+    @Test
     public void testSetNameWhenNameIs5CharactersLong()
     {
         // Exercise
-        boolean result = stockItem.setName("12345");
+        String name = "12345";
+        boolean result = stockItem.setName(name);
 
-        // Verify
+        // Verify (this name should be valid)
         Assertions.assertTrue(result);
+        // Name should be set
+        Assertions.assertEquals(name, stockItem.getName());
     }
 
     @Test
     public void testSetNameWhenNameIs100CharactersLong()
     {
         // Exercise
-        // Create 49 character name
+        // Create 100 character name
         StringBuilder name = new StringBuilder();
         for(int i = 0; i < 100; i++)
         {
@@ -44,15 +60,17 @@ public class StockTests {
         }
         boolean result = stockItem.setName(name.toString());
 
-        // Verify
+        // Verify (this name should be valid)
         Assertions.assertTrue(result);
+        // Name should be set
+        Assertions.assertEquals(name, stockItem.getName());
     }
 
     @Test
     public void testSetNameWhenNameIs101CharactersLong()
     {
         // Exercise
-        // Create 49 character name
+        // Create 101 character name
         StringBuilder name = new StringBuilder();
         for(int i = 0; i < 101; i++)
         {
@@ -60,7 +78,9 @@ public class StockTests {
         }
         boolean result = stockItem.setName(name.toString());
 
-        // Verify
+        // Verify (this name should be invalid)
         Assertions.assertFalse(result);
+        // Name should not be set
+        Assertions.assertEquals(null, stockItem.getName());
     }
 }

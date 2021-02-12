@@ -22,7 +22,8 @@ public class StockItem
 
     public boolean setName(String name)
     {
-        boolean validName = name.length() < 100;
+        // Name should be between 5 and 100 characters
+        boolean validName = name.length() >= 5 && name.length() <= 100;
 
         if(validName)
         {
@@ -30,5 +31,10 @@ public class StockItem
         }
         // Return true if name change was successful
         return validName;
+    }
+
+    public String getName()
+    {
+        return this.name;
     }
 }
