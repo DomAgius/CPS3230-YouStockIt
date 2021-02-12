@@ -37,4 +37,22 @@ public class StockItem
     {
         return this.name;
     }
+
+    public boolean setDescription(String desc)
+    {
+        // Description can be up to 500 characters long
+        boolean validDesc = desc.length() <= 500;
+
+        if(validDesc)
+        {
+            this.description = desc;
+        }
+        // Return true if description change was successful
+        return validDesc;
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
 }

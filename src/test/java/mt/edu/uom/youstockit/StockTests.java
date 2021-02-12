@@ -83,4 +83,40 @@ public class StockTests {
         // Name should not be set
         Assertions.assertNull(stockItem.getName());
     }
+
+    @Test
+    public void testSetDescriptionWhenDescriptionIs500CharactersLong()
+    {
+        // Exercise
+        // Create 101 character description
+        StringBuilder desc = new StringBuilder();
+        for(int i = 0; i < 500; i++)
+        {
+            desc.append("1");
+        }
+        boolean result = stockItem.setDescription(desc.toString());
+
+        // Verify (this description should be valid)
+        Assertions.assertTrue(result);
+        // Description should be set
+        Assertions.assertEquals(desc.toString(), stockItem.getDescription());
+    }
+
+    @Test
+    public void testSetDescriptionWhenDescriptionIs501CharactersLong()
+    {
+        // Exercise
+        // Create 101 character description
+        StringBuilder desc = new StringBuilder();
+        for(int i = 0; i < 501; i++)
+        {
+            desc.append("1");
+        }
+        boolean result = stockItem.setDescription(desc.toString());
+
+        // Verify (this description should be invalid)
+        Assertions.assertFalse(result);
+        // Description should not be set
+        Assertions.assertNull(stockItem.getDescription());
+    }
 }
