@@ -38,8 +38,10 @@ public class StockTests {
     @Test
     public void testSetNameWhenNameIs5CharactersLong()
     {
-        // Exercise
+        // Setup
         String name = "12345";
+
+        // Exercise
         boolean result = stockItem.setName(name);
 
         // Verify (this name should be valid)
@@ -51,13 +53,15 @@ public class StockTests {
     @Test
     public void testSetNameWhenNameIs100CharactersLong()
     {
-        // Exercise
+        // Setup
         // Create 100 character name
         StringBuilder name = new StringBuilder();
         for(int i = 0; i < 100; i++)
         {
             name.append("1");
         }
+
+        // Exercise
         boolean result = stockItem.setName(name.toString());
 
         // Verify (this name should be valid)
@@ -69,13 +73,15 @@ public class StockTests {
     @Test
     public void testSetNameWhenNameIs101CharactersLong()
     {
-        // Exercise
+        // Setup
         // Create 101 character name
         StringBuilder name = new StringBuilder();
         for(int i = 0; i < 101; i++)
         {
             name.append("1");
         }
+
+        // Exercise
         boolean result = stockItem.setName(name.toString());
 
         // Verify (this name should be invalid)
@@ -87,13 +93,15 @@ public class StockTests {
     @Test
     public void testSetDescriptionWhenDescriptionIs500CharactersLong()
     {
-        // Exercise
-        // Create 101 character description
+        // Setup
         StringBuilder desc = new StringBuilder();
         for(int i = 0; i < 500; i++)
         {
             desc.append("1");
         }
+
+        // Exercise
+        // Create 500 character description
         boolean result = stockItem.setDescription(desc.toString());
 
         // Verify (this description should be valid)
@@ -105,13 +113,15 @@ public class StockTests {
     @Test
     public void testSetDescriptionWhenDescriptionIs501CharactersLong()
     {
-        // Exercise
-        // Create 101 character description
+        // Setup
+        // Create 501 character description
         StringBuilder desc = new StringBuilder();
         for(int i = 0; i < 501; i++)
         {
             desc.append("1");
         }
+
+        // Exercise
         boolean result = stockItem.setDescription(desc.toString());
 
         // Verify (this description should be invalid)
