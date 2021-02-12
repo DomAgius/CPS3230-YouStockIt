@@ -32,7 +32,7 @@ public class StockTests {
         // Verify (this name should be invalid)
         Assertions.assertFalse(result);
         // Name should not be set
-        Assertions.assertEquals(null, stockItem.getName());
+        Assertions.assertNull(stockItem.getName());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class StockTests {
         // Verify (this name should be valid)
         Assertions.assertTrue(result);
         // Name should be set
-        Assertions.assertEquals(name, stockItem.getName());
+        Assertions.assertEquals(name.toString(), stockItem.getName());
     }
 
     @Test
@@ -81,6 +81,6 @@ public class StockTests {
         // Verify (this name should be invalid)
         Assertions.assertFalse(result);
         // Name should not be set
-        Assertions.assertEquals(null, stockItem.getName());
+        Assertions.assertNull(stockItem.getName());
     }
 }
