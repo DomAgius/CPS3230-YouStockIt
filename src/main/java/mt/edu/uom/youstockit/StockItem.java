@@ -11,13 +11,20 @@ public class StockItem
     public int quantity;
     public int orderAmount;
     public StockSupplier supplier;
+    public double buyingPrice;
     public double sellingPrice;
     public int numTimesSold;
     public boolean discontinued;
 
     public StockItem(int id)
     {
+        // Set id
         this.id = id;
+
+        // Set numeric values to -1 to show that they have not been initialized
+        minimumOrderQty = -1;
+        quantity = -1;
+        orderAmount = -1;
     }
 
     public boolean setName(String name)
@@ -82,5 +89,23 @@ public class StockItem
     public int getMinimumOrderQuantity()
     {
         return minimumOrderQty;
+    }
+
+    public boolean setQuantity(int quantity)
+    {
+        // Quantity must be at least 0 (so it can be set to be less than the minimum order quantity)
+        boolean valid = quantity >= 0;
+
+        if(valid)
+        {
+            this.quantity = quantity;
+        }
+        // Return true if change was successful
+        return valid;
+    }
+
+    public int getQuantity()
+    {
+        return quantity;
     }
 }

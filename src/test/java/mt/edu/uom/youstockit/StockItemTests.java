@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class StockTests {
+public class StockItemTests
+{
     StockItem stockItem;
 
     @BeforeEach
@@ -138,8 +139,8 @@ public class StockTests {
 
         // Verify (this quantity should be invalid)
         Assertions.assertFalse(result);
-        // Description should not be set
-        Assertions.assertEquals(0, stockItem.getMinimumOrderQuantity());
+        // Minimum order quantity should not be set
+        Assertions.assertEquals(-1, stockItem.getMinimumOrderQuantity());
     }
 
     @Test
@@ -150,7 +151,31 @@ public class StockTests {
 
         // Verify (this quantity should be valid)
         Assertions.assertTrue(result);
-        // Description should be set
+        // Minimum order quantity should be set
         Assertions.assertEquals(1, stockItem.getMinimumOrderQuantity());
+    }
+
+    @Test
+    public void testSetQuantityWhenQuantityIsMinus1()
+    {
+        // Exercise
+        boolean result = stockItem.setQuantity(-1);
+
+        // Verify (this quantity should be invalid)
+        Assertions.assertFalse(result);
+        // Minimum order quantity should not be set
+        Assertions.assertEquals(-1, stockItem.getQuantity());
+    }
+
+    @Test
+    public void testSetQuantityWhenQuantityIs0()
+    {
+        // Exercise
+        boolean result = stockItem.setQuantity(0);
+
+        // Verify (this quantity should be valid)
+        Assertions.assertTrue(result);
+        // Minimum order quantity should be set
+        Assertions.assertEquals(0, stockItem.getQuantity());
     }
 }
