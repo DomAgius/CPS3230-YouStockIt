@@ -10,7 +10,7 @@ public class StockItem
     public int minimumOrderQty;
     public int quantity;
     public int orderAmount;
-    public StockSupplier supplier;
+    public Supplier supplier;
     public double buyingPrice;
     public double sellingPrice;
     public int numTimesSold;
@@ -125,5 +125,15 @@ public class StockItem
     public int getOrderAmount()
     {
         return orderAmount;
+    }
+
+    public void setSupplier(Supplier supplier)
+    {
+        this.supplier = supplier;
+    }
+
+    public Supplier getSupplier()
+    {
+        return supplier;
     }
 }

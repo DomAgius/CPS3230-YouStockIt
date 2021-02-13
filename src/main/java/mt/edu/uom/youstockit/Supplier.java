@@ -1,4 +1,5 @@
 package mt.edu.uom.youstockit;
 
-public class StockSupplier {
+public class Supplier
+{
 }
