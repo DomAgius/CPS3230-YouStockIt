@@ -3,18 +3,18 @@ package mt.edu.uom.youstockit;
 public class StockItem
 {
     // Id of stock item - set only once
-    public int id;
-    public String name;
-    public String category;
-    public String description;
-    public int minimumOrderQty;
-    public int quantity;
-    public int orderAmount;
-    public Supplier supplier;
-    public double buyingPrice;
-    public double sellingPrice;
-    public int numTimesSold;
-    public boolean discontinued;
+    private int id;
+    private String name;
+    private String category;
+    private String description;
+    private int minimumOrderQty;
+    private int quantity;
+    private int orderAmount;
+    private Supplier supplier;
+    private double buyingPrice;
+    private double sellingPrice;
+    private int numTimesSold;
+    private boolean discontinued;
 
     public StockItem(int id)
     {
@@ -160,5 +160,25 @@ public class StockItem
     public double getSellingPrice()
     {
         return sellingPrice;
+    }
+
+    public void incrementNumTimesSold(int numTimesSold)
+    {
+        this.numTimesSold += numTimesSold;
+    }
+
+    public int getNumTimesSold()
+    {
+        return numTimesSold;
+    }
+
+    public void setIsDiscontinued(boolean discontinued)
+    {
+        this.discontinued = discontinued;
+    }
+
+    public boolean isDiscontinued()
+    {
+        return discontinued;
     }
 }
