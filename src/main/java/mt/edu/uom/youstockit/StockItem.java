@@ -136,4 +136,29 @@ public class StockItem
     {
         return supplier;
     }
+
+    public boolean setBuySellPrices(double buyingPrice, double sellingPrice)
+    {
+        // Both buying price and selling prices must be larger than zero, and the selling price must be larger than or
+        // equal to the buying price.
+        boolean valid = buyingPrice > 0.0 && sellingPrice >= buyingPrice;
+
+        if(valid)
+        {
+            this.buyingPrice = buyingPrice;
+            this.sellingPrice = sellingPrice;
+        }
+        // Return true if change was successful
+        return valid;
+    }
+
+    public double getBuyingPrice()
+    {
+        return buyingPrice;
+    }
+
+    public double getSellingPrice()
+    {
+        return sellingPrice;
+    }
 }

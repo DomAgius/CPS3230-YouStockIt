@@ -187,7 +187,7 @@ public class StockItemTests
 
         // Verify (this quantity should be invalid)
         Assertions.assertFalse(result);
-        // Minimum order quantity should not be set
+        // Order amount should not be set
         Assertions.assertEquals(-1, stockItem.getOrderAmount());
     }
 
@@ -199,7 +199,72 @@ public class StockItemTests
 
         // Verify (this quantity should be valid)
         Assertions.assertTrue(result);
-        // Minimum order quantity should be set
+        // Order amount quantity should be set
         Assertions.assertEquals(1, stockItem.getOrderAmount());
+    }
+
+    @Test
+    public void testSetBuySellPricesWhenSellPriceIsLargerThanBuyPrice()
+    {
+        // Exercise
+        boolean result = stockItem.setBuySellPrices(1.25, 1.50);
+
+        // Verify (these parameters should be valid)
+        Assertions.assertTrue(result);
+        // Buy and sell prices should not be set
+        Assertions.assertEquals(1.25, stockItem.getBuyingPrice());
+        Assertions.assertEquals(1.50, stockItem.getSellingPrice());
+    }
+
+    @Test
+    public void testSetBuySellPricesWhenSellPriceIsEqualToBuyPrice()
+    {
+        // Exercise
+        boolean result = stockItem.setBuySellPrices(1.50, 1.50);
+
+        // Verify (these parameters should be valid)
+        Assertions.assertTrue(result);
+        // Buy and sell prices should not be set
+        Assertions.assertEquals(1.50, stockItem.getBuyingPrice());
+        Assertions.assertEquals(1.50, stockItem.getSellingPrice());
+    }
+
+    @Test
+    public void testSetBuySellPricesWhenSellPriceIsLessThanBuyPrice()
+    {
+        // Exercise
+        boolean result = stockItem.setBuySellPrices(1.50, 1.25);
+
+        // Verify (these parameters should be invalid)
+        Assertions.assertFalse(result);
+        // Buy and sell prices should not be set
+        Assertions.assertEquals(0.00, stockItem.getBuyingPrice());
+        Assertions.assertEquals(0.00, stockItem.getSellingPrice());
+    }
+
+    @Test
+    public void testSetBuySellPricesWhenBuyPriceIsLessThanZero()
+    {
+        // Exercise
+        boolean result = stockItem.setBuySellPrices(-0.01, 0.01);
+
+        // Verify (these parameters should be invalid)
+        Assertions.assertFalse(result);
+        // Buy and sell prices should not be set
+        Assertions.assertEquals(0.00, stockItem.getBuyingPrice());
+        Assertions.assertEquals(0.00, stockItem.getSellingPrice());
+    }
+
+    @Test
+    public void testSetBuySellPricesWhenSellPriceIsLessThanZero()
+    {
+        // Exercise
+        boolean result = stockItem.setBuySellPrices(0.01, -0.01);
+
+        // Verify (these parameters should be invalid)
+        Assertions.assertFalse(result);
+        // Buy and sell prices should not be set
+        Assertions.assertEquals(0.00, stockItem.getBuyingPrice());
+        Assertions.assertEquals(0.00, stockItem.getSellingPrice());
     }
 }
