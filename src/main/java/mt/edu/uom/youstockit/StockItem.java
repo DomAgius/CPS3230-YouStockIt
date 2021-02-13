@@ -27,6 +27,11 @@ public class StockItem
         orderAmount = -1;
     }
 
+    public int getId()
+    {
+        return id;
+    }
+
     public boolean setName(String name)
     {
         // Name should be between 5 and 100 characters
