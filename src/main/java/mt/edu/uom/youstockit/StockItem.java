@@ -93,7 +93,7 @@ public class StockItem
 
     public boolean setQuantity(int quantity)
     {
-        // Quantity must be at least 0 (so it can be set to be less than the minimum order quantity)
+        // Quantity must be at least 0 (it can be set to be less than the minimum order quantity)
         boolean valid = quantity >= 0;
 
         if(valid)
@@ -107,5 +107,23 @@ public class StockItem
     public int getQuantity()
     {
         return quantity;
+    }
+
+    public boolean setOrderAmount(int amount)
+    {
+        // Order amount must be at least 1
+        boolean valid = amount >= 1;
+
+        if(valid)
+        {
+            this.orderAmount = amount;
+        }
+        // Return true if change was successful
+        return valid;
+    }
+
+    public int getOrderAmount()
+    {
+        return orderAmount;
     }
 }
