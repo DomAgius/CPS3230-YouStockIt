@@ -65,4 +65,22 @@ public class StockItem
     {
         return description;
     }
+
+    public boolean setMinimumOrderQuantity(int quantity)
+    {
+        // Minimum order quantity must be at least 1
+        boolean valid = quantity >= 1;
+
+        if(valid)
+        {
+            this.minimumOrderQty = quantity;
+        }
+        // Return true if change was successful
+        return valid;
+    }
+
+    public int getMinimumOrderQuantity()
+    {
+        return minimumOrderQty;
+    }
 }

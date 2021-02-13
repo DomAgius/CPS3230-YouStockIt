@@ -129,4 +129,28 @@ public class StockTests {
         // Description should not be set
         Assertions.assertNull(stockItem.getDescription());
     }
+
+    @Test
+    public void testSetMinimumOrderQuantityWhenQuantityIs0()
+    {
+        // Exercise
+        boolean result = stockItem.setMinimumOrderQuantity(0);
+
+        // Verify (this quantity should be invalid)
+        Assertions.assertFalse(result);
+        // Description should not be set
+        Assertions.assertEquals(0, stockItem.getMinimumOrderQuantity());
+    }
+
+    @Test
+    public void testSetMinimumOrderQuantityWhenQuantityIs1()
+    {
+        // Exercise
+        boolean result = stockItem.setMinimumOrderQuantity(1);
+
+        // Verify (this quantity should be valid)
+        Assertions.assertTrue(result);
+        // Description should be set
+        Assertions.assertEquals(1, stockItem.getMinimumOrderQuantity());
+    }
 }
