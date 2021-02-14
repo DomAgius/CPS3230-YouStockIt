@@ -30,8 +30,9 @@ public class StockOrderer
             return false;
         }
 
-        // Update item quantity after successful order
+        // Update item quantity and number of times sold after successful order
         item.setQuantity(ownedQuantity - buyQuantity);
+        item.incrementNumTimesSold(buyQuantity);
 
         if(item.getQuantity() < item.getMinimumOrderQuantity())
         {

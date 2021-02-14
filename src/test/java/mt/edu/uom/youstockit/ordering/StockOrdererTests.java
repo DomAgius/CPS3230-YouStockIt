@@ -53,6 +53,8 @@ public class StockOrdererTests
         Assertions.assertTrue(result);
         // And the quantity of the stock should decrease
         Assertions.assertEquals(20, stockItem.getQuantity());
+        // Check that the number of times sold increases
+        Assertions.assertEquals(30, stockItem.getNumTimesSold());
     }
 
     @Test
@@ -70,6 +72,8 @@ public class StockOrdererTests
         Assertions.assertFalse(result);
         // And the quantity should remain the same
         Assertions.assertEquals(50, stockItem.getQuantity());
+        // Check that the number of times sold stays the same
+        Assertions.assertEquals(0, stockItem.getNumTimesSold());
     }
 
     @Test
