@@ -3,9 +3,12 @@ package mt.edu.uom.youstockit.ordering;
 import mt.edu.uom.youstockit.ItemOrder;
 import mt.edu.uom.youstockit.StockItem;
 import mt.edu.uom.youstockit.supplier.Supplier;
+import mt.edu.uom.youstockit.supplier.SupplierErrorCode;
 import mt.edu.uom.youstockit.supplier.SupplierResponse;
 
-public class AutomatedStockOrderer
+import java.util.concurrent.TimeUnit;
+
+public class StockOrderer
 {
     /**
      *  Function used to handle stock ordering automatically
@@ -36,12 +39,24 @@ public class AutomatedStockOrderer
     // This helper function orders more of an object if the quantity goes below a certain number
     protected void orderMore(StockItem item)
     {
-        Supplier supplier =  item.getSupplier();
+        Supplier supplier = item.getSupplier();
 
         // Try to order from the supplier's server
         ItemOrder[] orders = new ItemOrder[1];
         orders[0] = new ItemOrder(item.getId(), item.getOrderAmount());
         SupplierResponse[] response = supplier.supplierServer.orderItems(orders);
+
+        if(response[0].errorCode == SupplierErrorCode.COMMUNICATION_ERROR)
+        {
+            try
+            {
+                Thread.sleep(5000);
+            } catch (InterruptedException e)
+            {
+                //TODO add send email to manager
+            }
+            response = supplier.supplierServer.orderItems(orders);
+        }
 
         // Add the items given to us by the supplier to the stock
         int newQuantity = item.getQuantity() + response[0].actualQuantity;

@@ -8,22 +8,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-public class AutomatedStockOrdererTests
+public class StockOrdererTests
 {
-    AutomatedStockOrderer orderer;
+    StockOrderer orderer;
     StockItem stockItem;
 
     @BeforeEach
     public void setup()
     {
         // Create a new automated stock orderer and stock item before each test
-        orderer = new AutomatedStockOrderer();
+        orderer = new StockOrderer();
         stockItem = new StockItem(1);
     }
 
