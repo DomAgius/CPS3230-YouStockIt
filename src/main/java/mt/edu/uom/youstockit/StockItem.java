@@ -1,5 +1,7 @@
 package mt.edu.uom.youstockit;
 
+import mt.edu.uom.youstockit.supplier.Supplier;
+
 public class StockItem
 {
     // Id of stock item - set only once

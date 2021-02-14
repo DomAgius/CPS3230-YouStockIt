@@ -1,13 +1,15 @@
 package mt.edu.uom.youstockit.ordering;
 
 import mt.edu.uom.youstockit.*;
+import mt.edu.uom.youstockit.supplier.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Matchers;
-import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -105,6 +107,34 @@ public class AutomatedStockOrdererTests
 
         // Verify
         Assertions.assertTrue(result);
+        // After ordering 30 items the ordering system should restock 30 more, resulting in 19 + 30 = 49 items
+        Assertions.assertEquals(49, stockItem.getQuantity());
+    }
+
+    @Test
+    public void testProcessOrderWhenSupplierServerReturnsCommunicationErrorOneTime()
+    {
+        // Setup
+        stockItem.setQuantity(50);
+        stockItem.setMinimumOrderQuantity(20);
+        stockItem.setOrderAmount(30);
+        // Mock supplier server to first return a communication error, and then return a successful response
+        SupplierServerMock serverMock = new SupplierServerMock();
+        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
+        serverMock.addResponse(30, 30, SupplierErrorCode.SUCCESS);
+        Supplier supplier = new Supplier();
+        supplier.supplierServer = serverMock;
+        stockItem.setSupplier(supplier);
+
+        // Exercise
+        boolean result = orderer.processOrder(stockItem, 31);
+
+        // Verify
+        Assertions.assertTrue(result);
+        // Check that the method tried to connect the supplier twice
+        Assertions.assertEquals(2, serverMock.getNumTimesOrderItems());
+        // Check that the method waited 5 seconds before calling the method again
+        Assertions.assertTrue(serverMock.getTimesBetweenCalls().get(0) >= 5000);
         // After ordering 30 items the ordering system should restock 30 more, resulting in 19 + 30 = 49 items
         Assertions.assertEquals(49, stockItem.getQuantity());
     }

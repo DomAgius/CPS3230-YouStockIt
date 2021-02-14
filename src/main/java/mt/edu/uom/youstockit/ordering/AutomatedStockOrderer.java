@@ -2,8 +2,8 @@ package mt.edu.uom.youstockit.ordering;
 
 import mt.edu.uom.youstockit.ItemOrder;
 import mt.edu.uom.youstockit.StockItem;
-import mt.edu.uom.youstockit.Supplier;
-import mt.edu.uom.youstockit.SupplierResponse;
+import mt.edu.uom.youstockit.supplier.Supplier;
+import mt.edu.uom.youstockit.supplier.SupplierResponse;
 
 public class AutomatedStockOrderer
 {

@@ -1,4 +1,6 @@
-package mt.edu.uom.youstockit;
+package mt.edu.uom.youstockit.supplier;
+
+import mt.edu.uom.youstockit.ItemOrder;
 
 public interface SupplierServer
 {

@@ -1,6 +1,6 @@
 package mt.edu.uom.youstockit.email;
 
-import mt.edu.uom.youstockit.Supplier;
+import mt.edu.uom.youstockit.supplier.Supplier;
 
 public interface EmailSender
 {
