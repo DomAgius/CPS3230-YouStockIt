@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
+import java.util.List;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -132,8 +134,47 @@ public class StockOrdererTests
         // Check that the method tried to connect the supplier twice
         Assertions.assertEquals(2, serverMock.getNumTimesOrderItems());
         // Check that the method waited 5 seconds before calling the method again
-        Assertions.assertTrue(serverMock.getTimesBetweenCalls().get(0) >= 5000);
+        assertAllLargerOrEqualTo(serverMock.getTimesBetweenCalls(), 5000);
         // After ordering 30 items the ordering system should restock 30 more, resulting in 19 + 30 = 49 items
         Assertions.assertEquals(49, stockItem.getQuantity());
+    }
+
+    @Test
+    public void testProcessOrderWhenSupplierServerReturnsCommunicationErrorTwoTimes()
+    {
+        // Setup
+        stockItem.setQuantity(50);
+        stockItem.setMinimumOrderQuantity(20);
+        stockItem.setOrderAmount(30);
+        // Mock supplier server to return a communication error twice, and then return a successful response
+        SupplierServerMock serverMock = new SupplierServerMock();
+        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
+        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
+        serverMock.addResponse(30, 30, SupplierErrorCode.SUCCESS);
+        Supplier supplier = new Supplier();
+        supplier.supplierServer = serverMock;
+        stockItem.setSupplier(supplier);
+
+        // Exercise
+        boolean result = orderer.processOrder(stockItem, 31);
+
+        // Verify
+        Assertions.assertTrue(result);
+        // Check that the method tried to connect the supplier three times
+        Assertions.assertEquals(3, serverMock.getNumTimesOrderItems());
+        // Check that the method waited 5 seconds before calling the method again
+        assertAllLargerOrEqualTo(serverMock.getTimesBetweenCalls(), 5000);
+        // After ordering 30 items the ordering system should restock 30 more, resulting in 19 + 30 = 49 items
+        Assertions.assertEquals(49, stockItem.getQuantity());
+    }
+
+
+    // Helper function used to assert if all values in a list
+    private void assertAllLargerOrEqualTo(List<Long> values, long minimum)
+    {
+        for (long value: values)
+        {
+            Assertions.assertTrue(value >= minimum);
+        }
     }
 }

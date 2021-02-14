@@ -41,25 +41,42 @@ public class StockOrderer
     {
         Supplier supplier = item.getSupplier();
 
-        // Try to order from the supplier's server
-        ItemOrder[] orders = new ItemOrder[1];
-        orders[0] = new ItemOrder(item.getId(), item.getOrderAmount());
-        SupplierResponse[] response = supplier.supplierServer.orderItems(orders);
+        int tries = 0;
+        boolean retry = true;
 
-        if(response[0].errorCode == SupplierErrorCode.COMMUNICATION_ERROR)
+        while(retry && tries < 3)
         {
-            try
-            {
-                Thread.sleep(5000);
-            } catch (InterruptedException e)
-            {
-                //TODO add send email to manager
-            }
-            response = supplier.supplierServer.orderItems(orders);
-        }
+            // Try to order from the supplier's server
+            ItemOrder[] orders = new ItemOrder[1];
+            orders[0] = new ItemOrder(item.getId(), item.getOrderAmount());
+            SupplierResponse[] response = supplier.supplierServer.orderItems(orders);
 
-        // Add the items given to us by the supplier to the stock
-        int newQuantity = item.getQuantity() + response[0].actualQuantity;
-        item.setQuantity(newQuantity);
+            // Handle supplier response
+            switch (response[0].errorCode)
+            {
+                case COMMUNICATION_ERROR:
+                {
+                    // Wait for 5 seconds before trying again
+                    try
+                    {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e)
+                    {
+                        //TODO add send email to manager
+                    }
+                } break;
+                case SUCCESS:
+                {
+                    // Add the items given to us by the supplier to the stock
+                    int newQuantity = item.getQuantity() + response[0].actualQuantity;
+                    item.setQuantity(newQuantity);
+                    // Stop trying to communicate to the supplier
+                    retry = false;
+                } break;
+            }
+
+            // Update the number of attempts
+            tries++;
+        }
     }
 }
