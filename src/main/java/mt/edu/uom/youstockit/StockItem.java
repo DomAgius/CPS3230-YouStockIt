@@ -82,8 +82,8 @@ public class StockItem
 
     public boolean setMinimumOrderQuantity(int quantity)
     {
-        // Minimum order quantity must be at least 1
-        boolean valid = quantity >= 1;
+        // Minimum order quantity must be at least 0
+        boolean valid = quantity >= 0;
 
         if(valid)
         {

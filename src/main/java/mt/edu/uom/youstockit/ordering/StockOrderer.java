@@ -84,6 +84,14 @@ public class StockOrderer
                                 "to your stock server.");
                     }
                 } break;
+
+                case ITEM_NOT_FOUND:
+                {
+                    // If item is not found in supplier's stock, set minimum order quantity to zero
+                    item.setMinimumOrderQuantity(0);
+                    item.setIsDiscontinued(true);
+                } break;
+
                 case SUCCESS:
                 {
                     // Add the items given to us by the supplier to the stock
