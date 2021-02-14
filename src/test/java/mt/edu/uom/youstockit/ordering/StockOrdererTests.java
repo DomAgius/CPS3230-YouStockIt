@@ -1,6 +1,7 @@
 package mt.edu.uom.youstockit.ordering;
 
 import mt.edu.uom.youstockit.*;
+import mt.edu.uom.youstockit.email.EmailSender;
 import mt.edu.uom.youstockit.supplier.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -12,18 +13,20 @@ import org.mockito.Mockito;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class StockOrdererTests
 {
+    EmailSender emailServer;
     StockOrderer orderer;
     StockItem stockItem;
 
     @BeforeEach
     public void setup()
     {
-        // Create a new automated stock orderer and stock item before each test
-        orderer = new StockOrderer();
+        // Setup a new automated stock orderer and stock item before each test
+        emailServer = Mockito.mock(EmailSender.class);
+        orderer = new StockOrderer(emailServer);
         stockItem = new StockItem(1);
     }
 
@@ -133,21 +136,22 @@ public class StockOrdererTests
         Assertions.assertTrue(result);
         // Check that the method tried to connect the supplier twice
         Assertions.assertEquals(2, serverMock.getNumTimesOrderItems());
-        // Check that the method waited 5 seconds before calling the method again
+        // It should wait 5 seconds before ordering from the supplier again
         assertAllLargerOrEqualTo(serverMock.getTimesBetweenCalls(), 5000);
         // After ordering 30 items the ordering system should restock 30 more, resulting in 19 + 30 = 49 items
         Assertions.assertEquals(49, stockItem.getQuantity());
     }
 
     @Test
-    public void testProcessOrderWhenSupplierServerReturnsCommunicationErrorTwoTimes()
+    public void testProcessOrderWhenSupplierServerReturnsCommunicationErrorThreeTimes()
     {
         // Setup
         stockItem.setQuantity(50);
         stockItem.setMinimumOrderQuantity(20);
         stockItem.setOrderAmount(30);
-        // Mock supplier server to return a communication error twice, and then return a successful response
+        // Mock supplier server to return a communication error three times, and then return a successful response
         SupplierServerMock serverMock = new SupplierServerMock();
+        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
         serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
         serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
         serverMock.addResponse(30, 30, SupplierErrorCode.SUCCESS);
@@ -160,14 +164,45 @@ public class StockOrdererTests
 
         // Verify
         Assertions.assertTrue(result);
-        // Check that the method tried to connect the supplier three times
-        Assertions.assertEquals(3, serverMock.getNumTimesOrderItems());
-        // Check that the method waited 5 seconds before calling the method again
+        // Check that the method tried to connect the supplier four times
+        Assertions.assertEquals(4, serverMock.getNumTimesOrderItems());
+        // It should wait 5 seconds before ordering from the supplier again
         assertAllLargerOrEqualTo(serverMock.getTimesBetweenCalls(), 5000);
         // After ordering 30 items the ordering system should restock 30 more, resulting in 19 + 30 = 49 items
         Assertions.assertEquals(49, stockItem.getQuantity());
     }
 
+    @Test
+    public void testProcessOrderWhenSupplierServerReturnsCommunicationErrorFourTimes()
+    {
+        // Setup
+        stockItem.setQuantity(50);
+        stockItem.setMinimumOrderQuantity(20);
+        stockItem.setOrderAmount(30);
+        // Mock supplier server to return a communication error four times
+        SupplierServerMock serverMock = new SupplierServerMock();
+        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
+        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
+        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
+        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
+        Supplier supplier = new Supplier();
+        supplier.supplierServer = serverMock;
+        stockItem.setSupplier(supplier);
+
+        // Exercise
+        boolean result = orderer.processOrder(stockItem, 31);
+
+        // Verify
+        Assertions.assertTrue(result);
+        // Check that the method tried to connect the supplier four times
+        Assertions.assertEquals(4, serverMock.getNumTimesOrderItems());
+        // It should wait 5 seconds before ordering from the supplier again
+        assertAllLargerOrEqualTo(serverMock.getTimesBetweenCalls(), 5000);
+        // It should notify the supplier about the connection failure
+        verify(emailServer, times(1)).sendEmailToSupplier(eq(supplier), anyString());
+        // After ordering 30 items the ordering system should not restock
+        Assertions.assertEquals(19, stockItem.getQuantity());
+    }
 
     // Helper function used to assert if all values in a list
     private void assertAllLargerOrEqualTo(List<Long> values, long minimum)

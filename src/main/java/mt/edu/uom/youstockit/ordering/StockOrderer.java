@@ -2,14 +2,19 @@ package mt.edu.uom.youstockit.ordering;
 
 import mt.edu.uom.youstockit.ItemOrder;
 import mt.edu.uom.youstockit.StockItem;
+import mt.edu.uom.youstockit.email.EmailSender;
 import mt.edu.uom.youstockit.supplier.Supplier;
-import mt.edu.uom.youstockit.supplier.SupplierErrorCode;
 import mt.edu.uom.youstockit.supplier.SupplierResponse;
-
-import java.util.concurrent.TimeUnit;
 
 public class StockOrderer
 {
+    private EmailSender emailSender;
+
+    public StockOrderer(EmailSender emailSender)
+    {
+        this.emailSender = emailSender;
+    }
+
     /**
      *  Function used to handle stock ordering automatically
      * @param item Item the order is being placed on
@@ -44,25 +49,39 @@ public class StockOrderer
         int tries = 0;
         boolean retry = true;
 
-        while(retry && tries < 3)
+        // Try to order from the supplier's server 4 times at most
+        while(retry && tries < 4)
         {
-            // Try to order from the supplier's server
             ItemOrder[] orders = new ItemOrder[1];
             orders[0] = new ItemOrder(item.getId(), item.getOrderAmount());
             SupplierResponse[] response = supplier.supplierServer.orderItems(orders);
+            // Update the number of attempts
+            tries++;
 
             // Handle supplier response
             switch (response[0].errorCode)
             {
                 case COMMUNICATION_ERROR:
                 {
-                    // Wait for 5 seconds before trying again
-                    try
+                    // If this is not the final try, wait for 5 seconds before trying again
+                    if(tries < 4)
                     {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e)
+                        try
+                        {
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e)
+                        {
+                            // If waiting fails, send an email to the manager to notify them about failure and abort
+                            emailSender.sendEmailToManager("YouStockIt failed to retry ordering of stock item \"" +
+                                    item.getName() + "\" with id " + item.getId());
+                            retry = false;
+                        }
+                    }
+                    // If this was the final attempt, send an email to the supplier
+                    else
                     {
-                        //TODO add send email to manager
+                        emailSender.sendEmailToSupplier(supplier, "YouStockIt system was unable to connect " +
+                                "to your stock server.");
                     }
                 } break;
                 case SUCCESS:
@@ -74,9 +93,6 @@ public class StockOrderer
                     retry = false;
                 } break;
             }
-
-            // Update the number of attempts
-            tries++;
         }
     }
 }
