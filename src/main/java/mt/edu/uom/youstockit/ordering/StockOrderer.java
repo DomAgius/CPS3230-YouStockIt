@@ -90,8 +90,15 @@ public class StockOrderer
                     // If item is not found in supplier's stock, set minimum order quantity to zero
                     item.setMinimumOrderQuantity(0);
                     item.setIsDiscontinued(true);
+                    retry = false;
                 } break;
 
+                case OUT_OF_STOCK:
+                {
+                    // Send an email to the manager, and continue to run code in SUCCESS case
+                    emailSender.sendEmailToManager("YouStockIt failed to restock item \"" + item.getName() +
+                            "\" with id " + item.getId() + " since the supplier has run out of stock.");
+                }
                 case SUCCESS:
                 {
                     // Add the items given to us by the supplier to the stock

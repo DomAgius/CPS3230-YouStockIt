@@ -223,12 +223,41 @@ public class StockOrdererTests
 
         // Verify
         Assertions.assertTrue(result);
+        // Check that the method tried to connect the supplier only once
+        Assertions.assertEquals(1, serverMock.getNumTimesOrderItems());
         // The minimum order quantity should now be set to zero
         Assertions.assertEquals(0, stockItem.getMinimumOrderQuantity());
         // The item should also be marked as discontinued
         Assertions.assertTrue(stockItem.isDiscontinued());
         // After ordering 31 items the ordering system should not restock
         Assertions.assertEquals(19, stockItem.getQuantity());
+    }
+
+    @Test
+    public void testProcessOrderWhenSupplierServerReturnsOutOfStock()
+    {
+        // Setup
+        stockItem.setQuantity(50);
+        stockItem.setMinimumOrderQuantity(20);
+        stockItem.setOrderAmount(30);
+        // Mock supplier server to return a communication error four times
+        SupplierServerMock serverMock = new SupplierServerMock();
+        serverMock.addResponse(30, 10, SupplierErrorCode.OUT_OF_STOCK);
+        Supplier supplier = new Supplier();
+        supplier.supplierServer = serverMock;
+        stockItem.setSupplier(supplier);
+
+        // Exercise
+        boolean result = orderer.processOrder(stockItem, 31);
+
+        // Verify
+        Assertions.assertTrue(result);
+        // Check that the method tried to connect the supplier only once
+        Assertions.assertEquals(1, serverMock.getNumTimesOrderItems());
+        // The system should email the manager to notify them about the issue
+        verify(emailServer, times(1)).sendEmailToManager(anyString());
+        // After ordering 31 items the ordering system should restock with only 10 items 10 + 19 = 29
+        Assertions.assertEquals(29, stockItem.getQuantity());
     }
 
     // Helper function used to assert if all values in a list are larger or equal to a minimum value
