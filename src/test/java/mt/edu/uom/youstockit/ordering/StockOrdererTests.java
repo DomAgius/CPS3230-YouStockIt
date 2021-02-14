@@ -2,12 +2,9 @@ package mt.edu.uom.youstockit.ordering;
 
 import mt.edu.uom.youstockit.*;
 import mt.edu.uom.youstockit.email.EmailSender;
+import mt.edu.uom.youstockit.email.ServiceLocator;
 import mt.edu.uom.youstockit.supplier.*;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Matchers;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
 import java.util.List;
@@ -17,25 +14,40 @@ import static org.mockito.Mockito.*;
 
 public class StockOrdererTests
 {
+    static ServiceLocator serviceLocator;
     EmailSender emailServer;
     StockOrderer orderer;
     StockItem stockItem;
 
-    @BeforeEach
-    public void setup()
+    @BeforeAll
+    public static void setupBeforeAll()
     {
-        // Setup a new automated stock orderer and stock item before each test
+        // Get an instance of the service locator singleton
+        serviceLocator = ServiceLocator.getInstance();
+    }
+
+    @BeforeEach
+    public void setupBeforeEach()
+    {
+        // Set up a mocked email sender service before each test
         emailServer = Mockito.mock(EmailSender.class);
-        orderer = new StockOrderer(emailServer);
+        serviceLocator.registerService("EmailSender", emailServer);
+
+        // Create a new automated stock orderer and stock item
+        orderer = new StockOrderer();
         stockItem = new StockItem(1);
     }
 
     @AfterEach
     public void teardown()
     {
-        // Remove reference to old stock orderer and stock item after each test
+        // Remove references to old object after each test
+        emailServer = null;
         orderer = null;
         stockItem = null;
+
+        // Clear state of ServiceLocator singleton
+        serviceLocator.clear();
     }
 
     @Test

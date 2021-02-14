@@ -3,6 +3,7 @@ package mt.edu.uom.youstockit.ordering;
 import mt.edu.uom.youstockit.ItemOrder;
 import mt.edu.uom.youstockit.StockItem;
 import mt.edu.uom.youstockit.email.EmailSender;
+import mt.edu.uom.youstockit.email.ServiceLocator;
 import mt.edu.uom.youstockit.supplier.Supplier;
 import mt.edu.uom.youstockit.supplier.SupplierResponse;
 
@@ -10,9 +11,11 @@ public class StockOrderer
 {
     private EmailSender emailSender;
 
-    public StockOrderer(EmailSender emailSender)
+    public StockOrderer()
     {
-        this.emailSender = emailSender;
+        // Find email sender service
+        ServiceLocator serviceLocator = ServiceLocator.getInstance();
+        this.emailSender = (EmailSender) serviceLocator.findService("EmailSender");
     }
 
     /**
