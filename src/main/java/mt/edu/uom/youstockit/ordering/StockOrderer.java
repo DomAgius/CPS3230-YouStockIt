@@ -9,7 +9,7 @@ import mt.edu.uom.youstockit.supplier.SupplierResponse;
 
 public class StockOrderer
 {
-    private EmailSender emailSender;
+    private final EmailSender emailSender;
 
     public StockOrderer()
     {

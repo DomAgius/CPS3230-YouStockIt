@@ -57,7 +57,7 @@ public class StockItem
         this.category = category;
     }
 
-    public String getCategory(String category)
+    public String getCategory()
     {
         return category;
     }
