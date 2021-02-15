@@ -19,6 +19,7 @@ public class UserInterface
         // Represents the action chosen by the user from the menu
         int menuChoice;
         // Counter used to assign unique ids to stock items
+        int stockIdCounter = 1;
 
 
         // Setup email server dummy
@@ -50,7 +51,7 @@ public class UserInterface
             do
             {
                 // Ask user for input, and validate it
-                menuChoice = getIntInput("\nPlease select an option: ");
+                menuChoice = getIntInput("\nPlease select an option");
                 valid = menuChoice >= 1 && menuChoice <= 7;
 
                 // If choice is invalid, output an error message
@@ -84,8 +85,23 @@ public class UserInterface
                     }
                 } break;
 
-                case 2:
+                // Add item to catalogue
+                case 3:
                 {
+                    // Create a new stock item and update stock id counter
+                    StockItem item = new StockItem(stockIdCounter++);
+
+                    // Ask user for name
+                    valid = false;
+                    while(!valid)
+                    {
+                        String name = getStringInput("Input item name");
+                        valid = item.setName(name);
+                        if(!valid)
+                        {
+                            System.out.println("Name must be between 5 and 100 characters long (inclusive).");
+                        }
+                    }
 
                 }
                 break;
@@ -109,7 +125,7 @@ public class UserInterface
         {
             try
             {
-                System.out.print(prompt);
+                System.out.print(prompt + ": ");
                 input = sc.nextInt();
                 valid = true;
             }
@@ -122,5 +138,44 @@ public class UserInterface
         } while (!valid);
 
         return input;
+    }
+
+    // Gets a price input from the user
+    public static double getPriceInput(String prompt)
+    {
+        // Create scanner to get user input
+        Scanner sc = new Scanner(System.in);
+        // User input
+        double input = 0;
+        // Initially assume input is invalid
+        boolean valid = false;
+        // Keep asking user for input until a valid integer is parsed
+        do
+        {
+            try
+            {
+                System.out.print(prompt + ": ");
+                input = sc.nextDouble();
+                valid = true;
+            }
+            catch (InputMismatchException e)
+            {
+                // If input is not a valid integer, clear standard input and display an error message
+                sc.nextLine();
+                System.out.print("Input must be a valid price.");
+            }
+        } while (!valid);
+
+        // Truncate input to 2 decimal places
+        return Math.floor(input * 100.0) / 100.0;
+    }
+
+    public static String getStringInput(String prompt)
+    {
+        // Create scanner to get user input
+        Scanner sc = new Scanner(System.in);
+        // Read next line of user input
+        System.out.print(prompt + ": ");
+        return sc.nextLine();
     }
 }
