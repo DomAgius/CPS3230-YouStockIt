@@ -7,15 +7,17 @@ import mt.edu.uom.youstockit.email.ServiceLocator;
 public class OrderingFacade
 {
     public StockOrderer stockOrderer;
-    public ProductCatalogue catalogue;
+    public ProductCatalogue availableItems;
+    public ProductCatalogue discontinuedItems;
 
     // Email sender is private since it is configured from the service locator
     private EmailSender emailSender;
 
-    public OrderingFacade(StockOrderer stockOrderer, ProductCatalogue catalogue)
+    public OrderingFacade(StockOrderer stockOrderer, ProductCatalogue availableItems, ProductCatalogue discontinuedItems)
     {
         this.stockOrderer = stockOrderer;
-        this.catalogue = catalogue;
+        this.availableItems = availableItems;
+        this.discontinuedItems = discontinuedItems;
 
         // Get email sender service
         ServiceLocator serviceLocator = ServiceLocator.getInstance();
@@ -25,7 +27,7 @@ public class OrderingFacade
     public FacadeResponse placeOrder(int id, int buyAmount)
     {
         // Search for stock item in product catalogue
-        StockItem stockItem = catalogue.getById(id);
+        StockItem stockItem = availableItems.getById(id);
         // If stock item does not exist, return an error message
         if(stockItem == null)
         {
@@ -37,11 +39,14 @@ public class OrderingFacade
         {
             String responseMessage = "Order placed successfully.";
 
-            // If the item is out of stock should not be restocked, delete it from the catalogue
+            // If the item is out of stock should not be restocked,
             if(stockItem.getMinimumOrderQuantity() == 0 && stockItem.getQuantity() == 0)
             {
+                // delete it from the catalogue of items being sold,
                 responseMessage += "\nItem has gone out of stock, removing from catalogue...";
-                catalogue.remove(stockItem.getId());
+                availableItems.remove(stockItem.getId());
+                // and add it to the catalogue of discontinued items
+                discontinuedItems.add(stockItem);
             }
             return new FacadeResponse(true, responseMessage);
         }
@@ -55,7 +60,7 @@ public class OrderingFacade
 
     public FacadeResponse deleteItem(int id)
     {
-        if(catalogue.remove(id))
+        if(availableItems.remove(id))
         {
             // Notify manager via email about deletion
             emailSender.sendEmailToManager("Item with id " + id + " was deleted from the product catalogue.");
@@ -66,5 +71,10 @@ public class OrderingFacade
         {
             return new FacadeResponse(false, "Stock item with ID " + id + " does not exist.");
         }
+    }
+
+    public double calculateProfits()
+    {
+        return 0;
     }
 }
