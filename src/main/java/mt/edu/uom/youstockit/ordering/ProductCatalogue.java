@@ -52,8 +52,8 @@ public class ProductCatalogue
     // Get all stock items
     public List<StockItem> getAll()
     {
-        // Note: since the list is passed directly the user can make direct changes to the product catalogue
-        return items;
+        // Note: the arraylist is cloned to prevent accidental changes to the original list in the catalogue
+        return new ArrayList<>(items);
     }
 
     // Get all items with a specific category

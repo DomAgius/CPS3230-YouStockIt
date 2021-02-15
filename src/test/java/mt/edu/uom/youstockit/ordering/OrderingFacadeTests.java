@@ -179,7 +179,7 @@ public class OrderingFacadeTests
     }
 
     @Test
-    public void testCalculateProfitWithEmptyProductCatalogue()
+    public void testCalculateProfitWithEmptyProductCatalogues()
     {
         // Setup
         // Set product catalogue to return an empty list
@@ -192,5 +192,101 @@ public class OrderingFacadeTests
         // Verify
         // Profits should be zero, since there are no stock items
         Assertions.assertEquals(0,profits);
+    }
+
+    @Test
+    public void testCalculateProfitWithOneAvailableItem()
+    {
+        // Setup
+        // This stock item should have a profit of (0.5-0.25) * 20 = 5
+        StockItem item = new StockItem(1);
+        item.setBuySellPrices(0.25,0.5);
+        item.incrementNumTimesSold(20);
+        // Set product catalogue of available items to return a list with one item
+        List<StockItem> items = new ArrayList<>();
+        items.add(item);
+        when(availableItems.getAll()).thenReturn(items);
+
+        // Exercise
+        double profits = orderingFacade.calculateProfits();
+
+        // Verify
+        Assertions.assertEquals(5, profits, 0.001);
+    }
+
+    @Test
+    public void testCalculateProfitWithTwoAvailableItems()
+    {
+        // Setup
+        // This stock item should have a profit of (0.5-0.25) * 20 = 5
+        StockItem item1 = new StockItem(1);
+        item1.setBuySellPrices(0.25,0.5);
+        item1.incrementNumTimesSold(20);
+        // This stock item should have a profit of (19.99 - 9.99) * 5 = 50
+        StockItem item2 = new StockItem(2);
+        item2.setBuySellPrices(9.99, 19.99);
+        item2.incrementNumTimesSold(5);
+        // Set product catalogue of available items to return a list with two items
+        List<StockItem> items = new ArrayList<>();
+        items.add(item1);
+        items.add(item2);
+        when(availableItems.getAll()).thenReturn(items);
+
+        // Exercise
+        double profits = orderingFacade.calculateProfits();
+
+        // Verify
+        // Total profit should be 5 + 50 = 55
+        Assertions.assertEquals(55, profits, 0.001);
+    }
+
+    @Test
+    public void testCalculateProfitWithOneDiscontinuedItem()
+    {
+        // Setup
+        // This stock item should have a profit of (1.5-0.8) * 15 = 10.5
+        StockItem item = new StockItem(1);
+        item.setBuySellPrices(0.80,1.50);
+        item.incrementNumTimesSold(15);
+        // Set product catalogue of discontinued items to return a list with one item
+        List<StockItem> items = new ArrayList<>();
+        items.add(item);
+        when(discontinuedItems.getAll()).thenReturn(items);
+
+        // Exercise
+        double profits = orderingFacade.calculateProfits();
+
+        // Verify
+        Assertions.assertEquals(10.5, profits, 0.001);
+    }
+
+    @Test
+    public void testCalculateProfitWithOneAvailableAndOneDiscontinuedItem()
+    {
+        // Setup
+        // This stock item should have a profit of (0.5-0.25) * 20 = 5
+        StockItem item1 = new StockItem(1);
+        item1.setBuySellPrices(0.25,0.5);
+        item1.incrementNumTimesSold(20);
+        // This stock item should have a profit of (1.5-0.8) * 15 = 10.5
+        StockItem item2 = new StockItem(1);
+        item2.setBuySellPrices(0.80,1.50);
+        item2.incrementNumTimesSold(15);
+
+        // Set product catalogue of available items to return a list with one item
+        List<StockItem> items = new ArrayList<>();
+        items.add(item1);
+        when(availableItems.getAll()).thenReturn(items);
+        // Set product catalogue of discontinued items to return a list with one item
+        items = new ArrayList<>();
+        items.add(item2);
+        when(discontinuedItems.getAll()).thenReturn(items);
+
+        // Exercise
+        double profits = orderingFacade.calculateProfits();
+
+        // Verify
+        // Total profits should be 5 + 10.5 = 15.5
+        Assertions.assertEquals(15.5, profits, 0.001);
     }
 }

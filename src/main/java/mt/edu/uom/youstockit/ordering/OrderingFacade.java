@@ -4,6 +4,8 @@ import mt.edu.uom.youstockit.StockItem;
 import mt.edu.uom.youstockit.email.EmailSender;
 import mt.edu.uom.youstockit.email.ServiceLocator;
 
+import java.util.List;
+
 public class OrderingFacade
 {
     public StockOrderer stockOrderer;
@@ -75,6 +77,18 @@ public class OrderingFacade
 
     public double calculateProfits()
     {
-        return 0;
+        // Get all stock items, both ones that are still available and those that are discontinued
+        List<StockItem> items = availableItems.getAll();
+        items.addAll(discontinuedItems.getAll());
+
+        double totalProfit = 0.0;
+        // Add up the profits for each item
+        for (StockItem item : items)
+        {
+            double profitPerItem = item.getSellingPrice() - item.getBuyingPrice();
+            totalProfit += profitPerItem * item.getNumTimesSold();
+        }
+
+        return totalProfit;
     }
 }
