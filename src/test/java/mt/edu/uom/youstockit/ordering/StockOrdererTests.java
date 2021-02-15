@@ -243,8 +243,6 @@ public class StockOrdererTests
         Assertions.assertEquals(1, serverMock.getNumTimesOrderItems());
         // The minimum order quantity should now be set to zero
         Assertions.assertEquals(0, stockItem.getMinimumOrderQuantity());
-        // The item should also be marked as discontinued
-        Assertions.assertTrue(stockItem.isDiscontinued());
         // After ordering 31 items the ordering system should not restock
         Assertions.assertEquals(19, stockItem.getQuantity());
     }

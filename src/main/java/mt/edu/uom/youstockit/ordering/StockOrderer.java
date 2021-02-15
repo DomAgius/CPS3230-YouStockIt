@@ -93,7 +93,6 @@ public class StockOrderer
                 {
                     // If item is not found in supplier's stock, set minimum order quantity to zero
                     item.setMinimumOrderQuantity(0);
-                    item.setIsDiscontinued(true);
                     retry = false;
                 } break;
 

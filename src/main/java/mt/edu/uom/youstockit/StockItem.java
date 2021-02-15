@@ -16,7 +16,6 @@ public class StockItem
     private double buyingPrice;
     private double sellingPrice;
     private int numTimesSold;
-    private boolean discontinued;
 
     public StockItem(int id)
     {
@@ -177,15 +176,5 @@ public class StockItem
     public int getNumTimesSold()
     {
         return numTimesSold;
-    }
-
-    public void setIsDiscontinued(boolean discontinued)
-    {
-        this.discontinued = discontinued;
-    }
-
-    public boolean isDiscontinued()
-    {
-        return discontinued;
     }
 }
