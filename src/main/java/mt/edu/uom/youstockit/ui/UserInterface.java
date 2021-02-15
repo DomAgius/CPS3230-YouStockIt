@@ -44,7 +44,7 @@ public class UserInterface
             System.out.println("4. Remove item from Catalogue");
             System.out.println("5. Place customer order");
             System.out.println("6. Calculate profit from sales");
-            System.out.println("7. Calculate profit from sales");
+            System.out.println("7. Exit");
 
             // Get option choice from user
             boolean valid;
@@ -79,8 +79,9 @@ public class UserInterface
                     {
                         for(StockItem item : items)
                         {
+                            System.out.println("----------------Items----------------");
                             System.out.println("ID: " + item.getId() + " Name: " + item.getName() +
-                                    "Quantity: " + item.getQuantity());
+                                    " Quantity: " + item.getQuantity());
                         }
                     }
                 } break;
@@ -103,6 +104,75 @@ public class UserInterface
                         }
                     }
 
+                    // Ask user for category
+                    String category = getStringInput("Input item category");
+                    item.setCategory(category);
+
+                    // Ask user for description
+                    valid = false;
+                    while(!valid)
+                    {
+                        String description = getStringInput("Input item description");
+                        valid = item.setDescription(description);
+                        if(!valid)
+                        {
+                            System.out.println("Description must be between 0 and 500 characters long (inclusive).");
+                        }
+                    }
+
+                    // Ask user for quantity
+                    valid = false;
+                    while(!valid)
+                    {
+                        int quantity = getIntInput("Input item quantity");
+                        valid = item.setQuantity(quantity);
+                        if(!valid)
+                        {
+                            System.out.println("Item quantity must be at least 0.");
+                        }
+                    }
+
+                    // Ask user for minimum order quantity
+                    valid = false;
+                    while(!valid)
+                    {
+                        int minOrderQuantity = getIntInput("Input minimum order quantity");
+                        valid = item.setMinimumOrderQuantity(minOrderQuantity);
+                        if(!valid)
+                        {
+                            System.out.println("Minimum order quantity must be at least 0.");
+                        }
+                    }
+
+                    // Ask user for order amount
+                    valid = false;
+                    while(!valid)
+                    {
+                        int orderAmount = getIntInput("Input order amount");
+                        valid = item.setOrderAmount(orderAmount);
+                        if(!valid)
+                        {
+                            System.out.println("Order amount must be at least 0.");
+                        }
+                    }
+
+                    // Todo add supplier choice
+
+                    // Ask user for buying and selling prices
+                    valid = false;
+                    while(!valid)
+                    {
+                        double buyingPrice = getPriceInput("Input buying price");
+                        double sellingPrice = getPriceInput("Input selling price");
+                        valid = item.setBuySellPrices(buyingPrice, sellingPrice);
+                        if(!valid)
+                        {
+                            System.out.println("Selling price must be larger than buying price.");
+                        }
+                    }
+
+                    // Add item to product catalogue
+                    orderingFacade.addItem(item);
                 }
                 break;
             }
@@ -133,7 +203,7 @@ public class UserInterface
             {
                 // If input is not a valid integer, clear standard input and display an error message
                 sc.nextLine();
-                System.out.print("Input must be an integer.");
+                System.out.println("Input must be an integer.");
             }
         } while (!valid);
 
@@ -156,13 +226,19 @@ public class UserInterface
             {
                 System.out.print(prompt + ": ");
                 input = sc.nextDouble();
-                valid = true;
+                // Price must be positive
+                valid = input > 0;
             }
             catch (InputMismatchException e)
             {
                 // If input is not a valid integer, clear standard input and display an error message
                 sc.nextLine();
-                System.out.print("Input must be a valid price.");
+            }
+
+            // If input is not valid
+            if(!valid)
+            {
+                System.out.println("Input must be a positive real number.");
             }
         } while (!valid);
 
