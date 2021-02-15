@@ -1,16 +1,15 @@
 package mt.edu.uom.youstockit.ordering;
 
-import mt.edu.uom.youstockit.StockItem;
-import mt.edu.uom.youstockit.email.EmailSender;
-import mt.edu.uom.youstockit.email.ServiceLocator;
+import mt.edu.uom.youstockit.services.email.EmailSender;
+import mt.edu.uom.youstockit.services.ServiceLocator;
 
 import java.util.List;
 
 public class OrderingFacade
 {
-    public StockOrderer stockOrderer;
-    public ProductCatalogue availableItems;
-    public ProductCatalogue discontinuedItems;
+    private StockOrderer stockOrderer;
+    private ProductCatalogue availableItems;
+    private ProductCatalogue discontinuedItems;
 
     // Email sender is private since it is configured from the service locator
     private EmailSender emailSender;
@@ -26,6 +25,7 @@ public class OrderingFacade
         emailSender = (EmailSender) serviceLocator.findService("EmailSender");
     }
 
+    // Order an item from the catalogue
     public FacadeResponse placeOrder(int id, int buyAmount)
     {
         // Search for stock item in product catalogue
@@ -60,6 +60,13 @@ public class OrderingFacade
         }
     }
 
+    // Add an item to the product catalogue of available items
+    public void addItem(StockItem stockItem)
+    {
+        availableItems.add(stockItem);
+    }
+
+    // Delete an item from the product catalogue of available items
     public FacadeResponse deleteItem(int id)
     {
         if(availableItems.remove(id))
@@ -75,6 +82,7 @@ public class OrderingFacade
         }
     }
 
+    // Calculate profits for current session
     public double calculateProfits()
     {
         // Get all stock items, both ones that are still available and those that are discontinued
@@ -90,5 +98,17 @@ public class OrderingFacade
         }
 
         return totalProfit;
+    }
+
+    // Get all items available for order
+    public List<StockItem> getAvailableItems()
+    {
+        return availableItems.getAll();
+    }
+
+    // Get all items available for order in a specific category
+    public List<StockItem> getAvailableItems(String category)
+    {
+        return availableItems.getByCategory(category);
     }
 }

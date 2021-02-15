@@ -1,4 +1,4 @@
-package mt.edu.uom.youstockit.email;
+package mt.edu.uom.youstockit.services;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ public class ServiceLocator
 
     private ServiceLocator()
     {
-        services = new HashMap<String, Object>();
+        services = new HashMap<>();
     }
 
     // Lazily instantiates the singleton instance

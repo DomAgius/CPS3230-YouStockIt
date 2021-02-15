@@ -1,9 +1,8 @@
 package mt.edu.uom.youstockit.ordering;
 
-import mt.edu.uom.youstockit.ItemOrder;
-import mt.edu.uom.youstockit.StockItem;
-import mt.edu.uom.youstockit.email.EmailSender;
-import mt.edu.uom.youstockit.email.ServiceLocator;
+import mt.edu.uom.youstockit.supplier.ItemOrder;
+import mt.edu.uom.youstockit.services.email.EmailSender;
+import mt.edu.uom.youstockit.services.ServiceLocator;
 import mt.edu.uom.youstockit.supplier.Supplier;
 import mt.edu.uom.youstockit.supplier.SupplierResponse;
 

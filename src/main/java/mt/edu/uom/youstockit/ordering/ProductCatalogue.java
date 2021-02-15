@@ -1,7 +1,5 @@
 package mt.edu.uom.youstockit.ordering;
 
-import mt.edu.uom.youstockit.StockItem;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

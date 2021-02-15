@@ -1,4 +1,4 @@
-package mt.edu.uom.youstockit;
+package mt.edu.uom.youstockit.ordering;
 
 import mt.edu.uom.youstockit.supplier.Supplier;
 

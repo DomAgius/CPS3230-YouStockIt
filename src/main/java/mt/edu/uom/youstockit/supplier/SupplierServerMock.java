@@ -1,8 +1,5 @@
 package mt.edu.uom.youstockit.supplier;
 
-import mt.edu.uom.youstockit.ItemOrder;
-
-import javax.swing.plaf.SpinnerUI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,11 +19,11 @@ public class SupplierServerMock implements SupplierServer
     public SupplierServerMock()
     {
         numTimesOrderItems = 0;
-        timesBetweenCalls = new ArrayList<Long>();
+        timesBetweenCalls = new ArrayList<>();
         timeOfLastOrder = 0;
 
         // Initialise responses
-        serverResponses = new ArrayList<SupplierResponse[]>();
+        serverResponses = new ArrayList<>();
         currentResponseIndex = 0;
     }
 

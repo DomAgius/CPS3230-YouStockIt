@@ -1,4 +1,4 @@
-package mt.edu.uom.youstockit.email;
+package mt.edu.uom.youstockit.services.email;
 
 import mt.edu.uom.youstockit.supplier.Supplier;
 

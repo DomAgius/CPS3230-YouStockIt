@@ -1,6 +1,5 @@
 package mt.edu.uom.youstockit.ordering;
 
-import mt.edu.uom.youstockit.StockItem;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
 
 public class ProductCatalogueTests
 {
