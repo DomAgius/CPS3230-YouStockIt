@@ -123,4 +123,31 @@ public class OrderingFacadeTests
         // Since all items in stock are bought, the system should try to delete the item
         verify(catalogue, times(1)).remove(eq(1));
     }
+
+    @Test
+    public void testDeleteItemWhenItem()
+    {
+        // Setup
+        // Set catalogue to return a item which should not be restocked (0 minimum order quantity)
+        StockItem stockItem = new StockItem(1);
+        stockItem.setQuantity(20);
+        stockItem.setMinimumOrderQuantity(0);
+        when(catalogue.getById(anyInt())).thenReturn(stockItem);
+        // Set stock orderer to return that the order was successful, and remove all items in stock
+        doAnswer(invocationOnMock -> {
+            StockItem item = invocationOnMock.getArgumentAt(0, StockItem.class);
+            item.setQuantity(0);
+            return true;
+        }).when(stockOrderer).processOrder(eq(stockItem), anyInt());
+
+        // Exercise (order all items in stock)
+        FacadeResponse response = orderingFacade.placeOrder(1, 20);
+
+        // Verify
+        Assertions.assertTrue(response.succeeded);
+        String expectedMessage = "Order placed successfully.\nItem has gone out of stock, removing from catalogue...";
+        Assertions.assertEquals(response.message, expectedMessage);
+        // Since all items in stock are bought, the system should try to delete the item
+        verify(catalogue, times(1)).remove(eq(1));
+    }
 }

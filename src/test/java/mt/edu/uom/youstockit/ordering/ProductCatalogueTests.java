@@ -76,7 +76,27 @@ public class ProductCatalogueTests
     }
 
     @Test
-    public void testRemoveItemFromProductCatalogue()
+    public void testRemoveItemFromProductCatalogueNotContainingItem()
+    {
+        // Setup
+        // Initialize catalogue with a single item whish should not be deleted
+        StockItem item = new StockItem(1);
+        productCatalogue.add(item);
+
+        // Exercise
+        boolean result = productCatalogue.remove(2);
+        List<StockItem> items = productCatalogue.getAll();
+
+        // Verify
+        // Since the item has not been deleted it should return false
+        Assertions.assertFalse(result);
+        // The tour catalogue should still have a single item
+        Assertions.assertEquals(1, items.size());
+        Assertions.assertEquals(item, items.get(0));
+    }
+
+    @Test
+    public void testRemoveItemFromProductCatalogueWithItem()
     {
         // Setup
         StockItem item1 = new StockItem(1);
@@ -85,13 +105,15 @@ public class ProductCatalogueTests
         productCatalogue.add(item2);
 
         // Exercise
-        productCatalogue.remove(1);
-        List<StockItem> result = productCatalogue.getAll();
+        boolean result = productCatalogue.remove(1);
+        List<StockItem> items = productCatalogue.getAll();
 
         // Verify
+        // If the item has been deleted it should return true
+        Assertions.assertTrue(result);
         // The tour catalogue should have a single item
-        Assertions.assertEquals(1, result.size());
-        Assertions.assertEquals(item2, result.get(0));
+        Assertions.assertEquals(1, items.size());
+        Assertions.assertEquals(item2, items.get(0));
     }
 
     @Test

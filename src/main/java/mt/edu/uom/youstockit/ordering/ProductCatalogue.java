@@ -33,9 +33,20 @@ public class ProductCatalogue
     }
 
     // Add delete stock item with a given ID
-    public void remove(int id)
+    // Returns true if item with given ID was found and deleted and false otherwise
+    public boolean remove(int id)
     {
-        items.removeIf(stockItem -> stockItem.getId() == id);
+        // Search for item with given id
+        StockItem item = getById(id);
+        boolean isFound = item != null;
+
+        // If item is found, delete it
+        if(isFound)
+        {
+            items.removeIf(stockItem -> stockItem.getId() == id);
+        }
+
+        return isFound;
     }
 
     // Get all stock items
