@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
+
 public class ProductCatalogueTests
 {
     ProductCatalogue productCatalogue;
@@ -165,7 +168,7 @@ public class ProductCatalogueTests
     @Test
     public void testGetIdForCatalogueWithItems()
     {
-        // Exercise
+        // Setup
         StockItem item1 = new StockItem(1);
         item1.setCategory("Category1");
         StockItem item2 = new StockItem(2);

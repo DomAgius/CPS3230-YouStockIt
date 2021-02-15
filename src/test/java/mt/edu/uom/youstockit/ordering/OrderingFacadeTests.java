@@ -1,10 +1,9 @@
 package mt.edu.uom.youstockit.ordering;
 
 import mt.edu.uom.youstockit.StockItem;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import mt.edu.uom.youstockit.email.EmailSender;
+import mt.edu.uom.youstockit.email.ServiceLocator;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -17,13 +16,26 @@ import static org.mockito.Mockito.*;
 
 public class OrderingFacadeTests
 {
+    static ServiceLocator serviceLocator;
+    EmailSender emailSender;
     StockOrderer stockOrderer;
     ProductCatalogue catalogue;
     OrderingFacade orderingFacade;
 
-    @BeforeEach
-    public void setup()
+    @BeforeAll
+    public static void setupBeforeAll()
     {
+        // Get reference to service locator singleton
+        serviceLocator = ServiceLocator.getInstance();
+    }
+
+    @BeforeEach
+    public void setupBeforeEach()
+    {
+        // Mock email service before each test
+        emailSender = Mockito.mock(EmailSender.class);
+        serviceLocator.registerService("EmailSender", emailSender);
+
         // Create new mock dependencies before each test
         stockOrderer = Mockito.mock(StockOrderer.class);
         catalogue = Mockito.mock(ProductCatalogue.class);
@@ -54,7 +66,7 @@ public class OrderingFacadeTests
         // Order should fail since stock item with id is not found
         Assertions.assertFalse(response.succeeded);
         String expectedMessage = "Stock item with ID 1 does not exist.";
-        Assertions.assertTrue(response.message.contains(expectedMessage));
+        Assertions.assertEquals(response.message, expectedMessage);
     }
 
     @Test
@@ -72,10 +84,9 @@ public class OrderingFacadeTests
         FacadeResponse response = orderingFacade.placeOrder(1, 21);
 
         // Verify
-        // Order should fail since the user tried to buy an invalid amount
         Assertions.assertFalse(response.succeeded);
         String expectedMessage = "Requested quantity is invalid. Must be between 1 and 20 (inclusive).";
-        Assertions.assertTrue(response.message.contains(expectedMessage));
+        Assertions.assertEquals(response.message, expectedMessage);
     }
 
     @Test
@@ -94,7 +105,7 @@ public class OrderingFacadeTests
         // Verify
         Assertions.assertTrue(response.succeeded);
         String expectedMessage = "Order placed successfully.";
-        Assertions.assertTrue(response.message.contains(expectedMessage));
+        Assertions.assertEquals(response.message, expectedMessage);
     }
 
     @Test
@@ -149,5 +160,39 @@ public class OrderingFacadeTests
         Assertions.assertEquals(response.message, expectedMessage);
         // Since all items in stock are bought, the system should try to delete the item
         verify(catalogue, times(1)).remove(eq(1));
+    }
+
+    @Test
+    public void testDeleteItemWhenItemDoesNotExist()
+    {
+        // Setup
+        // Set product catalogue to return that product was not deleted
+        when(catalogue.remove(eq(1))).thenReturn(false);
+
+        // Exercise
+        FacadeResponse response = orderingFacade.deleteItem(1);
+
+        // Verify
+        Assertions.assertFalse(response.succeeded);
+        String expectedMessage = "Stock item with ID 1 does not exist.";
+        Assertions.assertEquals(response.message, expectedMessage);
+    }
+
+    @Test
+    public void testDeleteItemWhenItemExists()
+    {
+        // Setup
+        // Set product catalogue to return that product was deleted successfully
+        when(catalogue.remove(eq(1))).thenReturn(true);
+
+        // Exercise
+        FacadeResponse response = orderingFacade.deleteItem(1);
+
+        // Verify
+        Assertions.assertFalse(response.succeeded);
+        String expectedMessage = "Deleted item from catalogue and notified manager via email.";
+        Assertions.assertEquals(response.message, expectedMessage);
+        // Check that the method tried to contact the manager via email
+        verify(emailSender, times(1)).sendEmailToManager(anyString());
     }
 }

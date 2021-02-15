@@ -1,16 +1,25 @@
 package mt.edu.uom.youstockit.ordering;
 
 import mt.edu.uom.youstockit.StockItem;
+import mt.edu.uom.youstockit.email.EmailSender;
+import mt.edu.uom.youstockit.email.ServiceLocator;
 
 public class OrderingFacade
 {
     public StockOrderer stockOrderer;
     public ProductCatalogue catalogue;
 
+    // Email sender is private since it is configured from the service locator
+    private EmailSender emailSender;
+
     public OrderingFacade(StockOrderer stockOrderer, ProductCatalogue catalogue)
     {
         this.stockOrderer = stockOrderer;
         this.catalogue = catalogue;
+
+        // Get email sender service
+        ServiceLocator serviceLocator = ServiceLocator.getInstance();
+        emailSender = (EmailSender) serviceLocator.findService("EmailSender");
     }
 
     public FacadeResponse placeOrder(int id, int buyAmount)
@@ -41,6 +50,21 @@ public class OrderingFacade
         {
             return new FacadeResponse(false, "Requested quantity is invalid. Must be between 1 and " +
                     stockItem.getQuantity() + " (inclusive).");
+        }
+    }
+
+    public FacadeResponse deleteItem(int id)
+    {
+        if(catalogue.remove(id))
+        {
+            // Notify manager via email about deletion
+            emailSender.sendEmailToManager("Item with id " + id + " was deleted from the product catalogue.");
+            return new FacadeResponse(false, "Deleted item from catalogue and notified manager via " +
+                    "email.");
+        }
+        else
+        {
+            return new FacadeResponse(false, "Stock item with ID " + id + " does not exist.");
         }
     }
 }
