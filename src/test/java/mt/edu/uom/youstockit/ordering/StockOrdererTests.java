@@ -138,8 +138,8 @@ public class StockOrdererTests
         stockItem.setOrderAmount(30);
         // Mock supplier server to first return a communication error, and then return a successful response
         SupplierServerMock serverMock = new SupplierServerMock();
-        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
-        serverMock.addResponse(30, 30, SupplierErrorCode.SUCCESS);
+        serverMock.addResponse(0, SupplierErrorCode.COMMUNICATION_ERROR);
+        serverMock.addResponse(30, SupplierErrorCode.SUCCESS);
         Supplier supplier = new Supplier();
         supplier.supplierServer = serverMock;
         stockItem.setSupplier(supplier);
@@ -166,10 +166,10 @@ public class StockOrdererTests
         stockItem.setOrderAmount(30);
         // Mock supplier server to return a communication error three times, and then return a successful response
         SupplierServerMock serverMock = new SupplierServerMock();
-        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
-        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
-        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
-        serverMock.addResponse(30, 30, SupplierErrorCode.SUCCESS);
+        serverMock.addResponse(0, SupplierErrorCode.COMMUNICATION_ERROR);
+        serverMock.addResponse(0, SupplierErrorCode.COMMUNICATION_ERROR);
+        serverMock.addResponse(0, SupplierErrorCode.COMMUNICATION_ERROR);
+        serverMock.addResponse(30, SupplierErrorCode.SUCCESS);
         Supplier supplier = new Supplier();
         supplier.supplierServer = serverMock;
         stockItem.setSupplier(supplier);
@@ -196,10 +196,10 @@ public class StockOrdererTests
         stockItem.setOrderAmount(30);
         // Mock supplier server to return a communication error four times
         SupplierServerMock serverMock = new SupplierServerMock();
-        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
-        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
-        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
-        serverMock.addResponse(30, 0, SupplierErrorCode.COMMUNICATION_ERROR);
+        serverMock.addResponse(0, SupplierErrorCode.COMMUNICATION_ERROR);
+        serverMock.addResponse(0, SupplierErrorCode.COMMUNICATION_ERROR);
+        serverMock.addResponse(0, SupplierErrorCode.COMMUNICATION_ERROR);
+        serverMock.addResponse(0, SupplierErrorCode.COMMUNICATION_ERROR);
         Supplier supplier = new Supplier();
         supplier.supplierServer = serverMock;
         stockItem.setSupplier(supplier);
@@ -228,7 +228,7 @@ public class StockOrdererTests
         stockItem.setOrderAmount(30);
         // Mock supplier server to return a communication error four times
         SupplierServerMock serverMock = new SupplierServerMock();
-        serverMock.addResponse(30, 0, SupplierErrorCode.ITEM_NOT_FOUND);
+        serverMock.addResponse(0, SupplierErrorCode.ITEM_NOT_FOUND);
         Supplier supplier = new Supplier();
         supplier.supplierServer = serverMock;
         stockItem.setSupplier(supplier);
@@ -254,7 +254,7 @@ public class StockOrdererTests
         stockItem.setMinimumOrderQuantity(0);
         // Create a supplier server with a response ready in case the orderer tries to connect to it
         SupplierServerMock serverMock = new SupplierServerMock();
-        serverMock.addResponse(30, 10, SupplierErrorCode.OUT_OF_STOCK);
+        serverMock.addResponse(10, SupplierErrorCode.OUT_OF_STOCK);
         Supplier supplier = new Supplier();
         supplier.supplierServer = serverMock;
         stockItem.setSupplier(supplier);
@@ -279,7 +279,7 @@ public class StockOrdererTests
         stockItem.setOrderAmount(30);
         // Mock supplier server to return a communication error four times
         SupplierServerMock serverMock = new SupplierServerMock();
-        serverMock.addResponse(30, 10, SupplierErrorCode.OUT_OF_STOCK);
+        serverMock.addResponse(10, SupplierErrorCode.OUT_OF_STOCK);
         Supplier supplier = new Supplier();
         supplier.supplierServer = serverMock;
         stockItem.setSupplier(supplier);

@@ -59,6 +59,8 @@ public class SupplierServerMock implements SupplierServer
             else if(!serverResponses.isEmpty())
             {
                 response = serverResponses.get(currentResponseIndex);
+                // Set amount of requested items from order
+                response[0].requestedQuantity = order.quantity;
                 if(currentResponseIndex < serverResponses.size()-1)
                 {
                     currentResponseIndex++;
@@ -70,10 +72,11 @@ public class SupplierServerMock implements SupplierServer
     }
 
     // Add a pre-canned response to the mock
-    public void addResponse(int requestedQuantity, int actualQuantity, SupplierErrorCode errorCode)
+    public void addResponse(int actualQuantity, SupplierErrorCode errorCode)
     {
         SupplierResponse[] response = new SupplierResponse[1];
-        response[0] = new SupplierResponse(requestedQuantity, actualQuantity, errorCode);
+        // Note: Requested quantity is set automatically when the order is received
+        response[0] = new SupplierResponse(0, actualQuantity, errorCode);
         serverResponses.add(response);
     }
 
