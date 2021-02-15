@@ -16,10 +16,10 @@ public class UserInterface
 {
     public static void main(String[] args)
     {
-        // Create scanner to get user input
-        Scanner sc = new Scanner(System.in);
         // Represents the action chosen by the user from the menu
-        int menuChoice = 0;
+        int menuChoice;
+        // Counter used to assign unique ids to stock items
+
 
         // Setup email server dummy
         EmailSender emailSender = new EmailSenderDummy();
@@ -46,21 +46,14 @@ public class UserInterface
             System.out.println("7. Calculate profit from sales");
 
             // Get option choice from user
-            boolean valid = false;
+            boolean valid;
             do
             {
-                try
-                {
-                    System.out.print("\nPlease select an option: ");
-                    menuChoice = sc.nextInt();
-                    // Check if choice is valid
-                    valid = menuChoice >= 1 && menuChoice <= 7;
-                }
-                catch (InputMismatchException e)
-                {
-                    sc.nextLine();
-                }
+                // Ask user for input, and validate it
+                menuChoice = getIntInput("\nPlease select an option: ");
+                valid = menuChoice >= 1 && menuChoice <= 7;
 
+                // If choice is invalid, output an error message
                 if(!valid)
                 {
                     System.out.println("Invalid choice. Input must be an integer from 1 to 7");
@@ -90,6 +83,12 @@ public class UserInterface
                         }
                     }
                 } break;
+
+                case 2:
+                {
+
+                }
+                break;
             }
 
         } while (menuChoice != 7);
@@ -97,8 +96,31 @@ public class UserInterface
     }
 
     // Gets an integer input from the user
-    public void getIntInput(String prompt, String errorMessage, int min, int max)
+    public static int getIntInput(String prompt)
     {
+        // Create scanner to get user input
+        Scanner sc = new Scanner(System.in);
+        // User input
+        int input = 0;
+        // Initially assume input is invalid
+        boolean valid = false;
+        // Keep asking user for input until a valid integer is parsed
+        do
+        {
+            try
+            {
+                System.out.print(prompt);
+                input = sc.nextInt();
+                valid = true;
+            }
+            catch (InputMismatchException e)
+            {
+                // If input is not a valid integer, clear standard input and display an error message
+                sc.nextLine();
+                System.out.print("Input must be an integer.");
+            }
+        } while (!valid);
 
+        return input;
     }
 }
