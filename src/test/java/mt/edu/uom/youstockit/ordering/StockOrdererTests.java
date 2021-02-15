@@ -113,7 +113,7 @@ public class StockOrdererTests
         stockItem.setOrderAmount(30);
         // Mock supplier server to return requested number of items
         SupplierServerMock serverMock = new SupplierServerMock();
-        serverMock.addResponse(30, 30, SupplierErrorCode.SUCCESS);
+        serverMock.alwaysReturnSuccessfulResponse();
         Supplier supplier = new Supplier();
         supplier.supplierServer = serverMock;
         stockItem.setSupplier(supplier);

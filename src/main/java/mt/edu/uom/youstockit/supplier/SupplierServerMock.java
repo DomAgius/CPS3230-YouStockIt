@@ -11,10 +11,11 @@ public class SupplierServerMock implements SupplierServer
     private List<Long> timesBetweenCalls;
     // Stores the system time at which the "orderItems" method was last called
     private long timeOfLastOrder;
-
     // Store a list of pre-canned responses and an index to keep track of the last response that was given
     private List<SupplierResponse[]> serverResponses;
     private int currentResponseIndex;
+    // Should the mock generate "success" responses dynamically instead of outputting them from a list?
+    private boolean alwaysSuccess;
 
     public SupplierServerMock()
     {
@@ -40,18 +41,31 @@ public class SupplierServerMock implements SupplierServer
         // Increment the number of times this method was called
         numTimesOrderItems++;
 
-        // By default return null
+        // By default return null response
         SupplierResponse[] response = null;
-        // If the response list is not empty, return the next pre-canned response in the list
-        // Note: If the end of list is reached, this keeps outputting last response
-        if(!serverResponses.isEmpty())
+
+        // Only output a response if the first order exists
+        ItemOrder order = orders[0];
+        if(order != null)
         {
-            response = serverResponses.get(currentResponseIndex);
-            if(currentResponseIndex < serverResponses.size()-1)
+            // If the supplier only needs to output success responses, generate them dynamically based on order
+            if(alwaysSuccess)
             {
-                currentResponseIndex++;
+                response = new SupplierResponse[1];
+                response[0] = new SupplierResponse(order.quantity, order.quantity, SupplierErrorCode.SUCCESS);
+            }
+            // Else if the response list is not empty, return the next pre-canned response in the list
+            // Note: If the end of list is reached, this keeps outputting last response
+            else if(!serverResponses.isEmpty())
+            {
+                response = serverResponses.get(currentResponseIndex);
+                if(currentResponseIndex < serverResponses.size()-1)
+                {
+                    currentResponseIndex++;
+                }
             }
         }
+
         return response;
     }
 
@@ -61,6 +75,12 @@ public class SupplierServerMock implements SupplierServer
         SupplierResponse[] response = new SupplierResponse[1];
         response[0] = new SupplierResponse(requestedQuantity, actualQuantity, errorCode);
         serverResponses.add(response);
+    }
+
+    // Set mock to dynamically create successful responses (i.e. according to input parameters)
+    public void alwaysReturnSuccessfulResponse()
+    {
+        alwaysSuccess = true;
     }
 
     public int getNumTimesOrderItems()
