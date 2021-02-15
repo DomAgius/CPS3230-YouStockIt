@@ -14,6 +14,7 @@ import mt.edu.uom.youstockit.supplier.SupplierServerMock;
 
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class UserInterface
@@ -73,23 +74,17 @@ public class UserInterface
                 // View Catalogue
                 case 1:
                 {
-                    List<StockItem> items = orderingFacade.getAvailableItems();
+                    List<StockItem> stockItems = orderingFacade.getAvailableItems();
+                    displayStockItems(stockItems);
+                } break;
 
-                    // If product catalogue is empty, inform the user
-                    if(items.isEmpty())
-                    {
-                        System.out.println("No items available in product catalogue.");
-                    }
-                    // Otherwise show all items in the catalogue
-                    else
-                    {
-                        System.out.println("----------------Items----------------");
-                        for(StockItem item : items)
-                        {
-                            System.out.println("ID: " + item.getId() + " Name: " + item.getName() +
-                                    " Quantity: " + item.getQuantity());
-                        }
-                    }
+                // View items in category
+                case 2:
+                {
+                    // Ask user to input category
+                    String category = getStringInput("Input category");
+                    List<StockItem> stockItems = orderingFacade.getAvailableItems(category);
+                    displayStockItems(stockItems);
                 } break;
 
                 // Add item to catalogue
@@ -198,7 +193,10 @@ public class UserInterface
         // Create a supplier which always returns a successful response
         SupplierServerMock server = new SupplierServerMock();
         server.alwaysReturnSuccessfulResponse();
-
+        suppliers[0] = new Supplier();
+        suppliers[0].id = 1;
+        suppliers[0].name = "Success supplier";
+        suppliers[0].supplierServer = server;
         // Create a supplier which always returns a communication error
         server = new SupplierServerMock();
         server.addResponse(0, SupplierErrorCode.COMMUNICATION_ERROR);
@@ -250,6 +248,25 @@ public class UserInterface
 
         // Return chosen supplier
         return suppliers[supplierChoice-1];
+    }
+
+    public static void displayStockItems(List<StockItem> stockItems)
+    {
+        // If product catalogue is empty, inform the user
+        if(stockItems.isEmpty())
+        {
+            System.out.println("No items found in product catalogue.");
+        }
+        // Otherwise show all items in the catalogue
+        else
+        {
+            System.out.println("----------------Items----------------");
+            for(StockItem item : stockItems)
+            {
+                System.out.println("ID: " + item.getId() + " Name: " + item.getName() +
+                        " Quantity: " + item.getQuantity());
+            }
+        }
     }
 
     // Gets an integer input from the user
