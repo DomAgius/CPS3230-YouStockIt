@@ -7,6 +7,10 @@ import mt.edu.uom.youstockit.ordering.StockOrderer;
 import mt.edu.uom.youstockit.services.ServiceLocator;
 import mt.edu.uom.youstockit.services.email.EmailSender;
 import mt.edu.uom.youstockit.services.email.EmailSenderDummy;
+import mt.edu.uom.youstockit.supplier.Supplier;
+import mt.edu.uom.youstockit.supplier.SupplierErrorCode;
+import mt.edu.uom.youstockit.supplier.SupplierServer;
+import mt.edu.uom.youstockit.supplier.SupplierServerMock;
 
 import java.util.InputMismatchException;
 import java.util.List;
@@ -21,6 +25,8 @@ public class UserInterface
         // Counter used to assign unique ids to stock items
         int stockIdCounter = 1;
 
+        // Create mock suppliers
+        Supplier[] suppliers = createSuppliers();
 
         // Setup email server dummy
         EmailSender emailSender = new EmailSenderDummy();
@@ -77,9 +83,9 @@ public class UserInterface
                     // Otherwise show all items in the catalogue
                     else
                     {
+                        System.out.println("----------------Items----------------");
                         for(StockItem item : items)
                         {
-                            System.out.println("----------------Items----------------");
                             System.out.println("ID: " + item.getId() + " Name: " + item.getName() +
                                     " Quantity: " + item.getQuantity());
                         }
@@ -156,7 +162,8 @@ public class UserInterface
                         }
                     }
 
-                    // Todo add supplier choice
+                    // Ask user to choose a supplier
+                    Supplier supplier = chooseSupplier(suppliers);
 
                     // Ask user for buying and selling prices
                     valid = false;
@@ -179,6 +186,70 @@ public class UserInterface
 
         } while (menuChoice != 7);
 
+    }
+
+    // Mock four supplier servers all of which always give the same output
+    public static Supplier[] createSuppliers()
+    {
+        Supplier[] suppliers = new Supplier[4];
+        // Create four supplier servers each returning a single type of response
+        SupplierServer[] servers = new SupplierServer[4];
+
+        // Create a supplier which always returns a successful response
+        SupplierServerMock server = new SupplierServerMock();
+        server.alwaysReturnSuccessfulResponse();
+
+        // Create a supplier which always returns a communication error
+        server = new SupplierServerMock();
+        server.addResponse(0, SupplierErrorCode.COMMUNICATION_ERROR);
+        suppliers[1] = new Supplier();
+        suppliers[1].id = 2;
+        suppliers[1].name = "Communication error supplier";
+        suppliers[1].supplierServer = server;
+        // Create a supplier which always returns an item not found error
+        server = new SupplierServerMock();
+        server.addResponse(0, SupplierErrorCode.ITEM_NOT_FOUND);
+        suppliers[2] = new Supplier();
+        suppliers[2].id = 3;
+        suppliers[2].name = "Item not found supplier";
+        suppliers[2].supplierServer = server;
+        // Create a supplier which always returns an out of stock error
+        server.addResponse(10, SupplierErrorCode.OUT_OF_STOCK);
+        suppliers[3] = new Supplier();
+        suppliers[3].id = 4;
+        suppliers[3].name = "Out of stock supplier";
+        suppliers[3].supplierServer = new SupplierServerMock();
+
+        return suppliers;
+    }
+
+    public static Supplier chooseSupplier(Supplier[] suppliers)
+    {
+        // Show menu
+        System.out.println("\nSuppliers");
+        System.out.println("----------");
+        for (int i = 0; i < suppliers.length; i++)
+        {
+            System.out.println((i+1) + ". " + suppliers[i].name);
+        }
+
+        // Keep prompting user for input until they give a valid choice
+        int supplierChoice;
+        boolean valid;
+        do
+        {
+            supplierChoice = getIntInput("\nPlease select a supplier");
+            valid = supplierChoice >= 1 && supplierChoice <= suppliers.length;
+
+            // If choice is invalid, output an error message
+            if(!valid)
+            {
+                System.out.println("Invalid choice. Input must be an integer between 1 and " + suppliers.length);
+            }
+        } while (!valid);
+
+        // Return chosen supplier
+        return suppliers[supplierChoice-1];
     }
 
     // Gets an integer input from the user
