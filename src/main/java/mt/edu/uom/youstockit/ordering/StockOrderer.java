@@ -22,12 +22,12 @@ public class StockOrderer
      *  Function used to handle stock ordering automatically
      * @param item Item the order is being placed on
      * @param buyQuantity How much of the item is being bought in the order
-     * @return False if stock item should be deleted and true if it shouldn't
+     * @return True when the amount of requested stock is valid and available and false otherwise
      */
     public boolean processOrder(StockItem item, int buyQuantity)
     {
         int ownedQuantity = item.getQuantity();
-        // If order quantity is negative or if there are not enough items to fulfill the order, then abort the order
+        // If order quantity is 0 or less or if there are not enough items to fulfill the order, then abort the order
         if(buyQuantity < 0 || ownedQuantity < buyQuantity)
         {
             return false;
@@ -46,7 +46,7 @@ public class StockOrderer
     }
 
     // This helper function orders more of an object if the quantity goes below a certain number
-    protected void orderMore(StockItem item)
+    private void orderMore(StockItem item)
     {
         Supplier supplier = item.getSupplier();
 
