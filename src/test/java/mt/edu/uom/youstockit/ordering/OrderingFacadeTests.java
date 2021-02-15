@@ -186,7 +186,7 @@ public class OrderingFacadeTests
         when(availableItems.getAll()).thenReturn(items);
 
         // Exercise
-        double profits = orderingFacade.calculateProfits();
+        double profits = orderingFacade.calculateProfit();
 
         // Verify
         // Profits should be zero, since there are no stock items
@@ -207,7 +207,7 @@ public class OrderingFacadeTests
         when(availableItems.getAll()).thenReturn(items);
 
         // Exercise
-        double profits = orderingFacade.calculateProfits();
+        double profits = orderingFacade.calculateProfit();
 
         // Verify
         Assertions.assertEquals(5, profits, 0.001);
@@ -232,7 +232,7 @@ public class OrderingFacadeTests
         when(availableItems.getAll()).thenReturn(items);
 
         // Exercise
-        double profits = orderingFacade.calculateProfits();
+        double profits = orderingFacade.calculateProfit();
 
         // Verify
         // Total profit should be 5 + 50 = 55
@@ -253,7 +253,7 @@ public class OrderingFacadeTests
         when(discontinuedItems.getAll()).thenReturn(items);
 
         // Exercise
-        double profits = orderingFacade.calculateProfits();
+        double profits = orderingFacade.calculateProfit();
 
         // Verify
         Assertions.assertEquals(10.5, profits, 0.001);
@@ -282,7 +282,7 @@ public class OrderingFacadeTests
         when(discontinuedItems.getAll()).thenReturn(items);
 
         // Exercise
-        double profits = orderingFacade.calculateProfits();
+        double profits = orderingFacade.calculateProfit();
 
         // Verify
         // Total profits should be 5 + 10.5 = 15.5

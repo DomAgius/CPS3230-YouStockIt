@@ -27,7 +27,7 @@ public class StockOrderer
     {
         int ownedQuantity = item.getQuantity();
         // If order quantity is 0 or less or if there are not enough items to fulfill the order, then abort the order
-        if(buyQuantity < 0 || ownedQuantity < buyQuantity)
+        if(buyQuantity <= 0 || ownedQuantity < buyQuantity)
         {
             return false;
         }

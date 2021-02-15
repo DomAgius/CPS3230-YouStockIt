@@ -88,14 +88,14 @@ public class StockOrdererTests
     }
 
     @Test
-    public void testProcessOrderWhenOrderQuantityIsNegative()
+    public void testProcessOrderWhenOrderQuantityIsZero()
     {
         // Setup
         stockItem.setQuantity(50);
         stockItem.setMinimumOrderQuantity(20);
 
         // Exercise
-        boolean result = orderer.processOrder(stockItem, -1);
+        boolean result = orderer.processOrder(stockItem, 0);
 
         // Verify
         // The order should be rejected in this case

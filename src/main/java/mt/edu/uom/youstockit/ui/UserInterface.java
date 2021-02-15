@@ -1,9 +1,6 @@
 package mt.edu.uom.youstockit.ui;
 
-import mt.edu.uom.youstockit.ordering.OrderingFacade;
-import mt.edu.uom.youstockit.ordering.ProductCatalogue;
-import mt.edu.uom.youstockit.ordering.StockItem;
-import mt.edu.uom.youstockit.ordering.StockOrderer;
+import mt.edu.uom.youstockit.ordering.*;
 import mt.edu.uom.youstockit.services.ServiceLocator;
 import mt.edu.uom.youstockit.services.email.EmailSender;
 import mt.edu.uom.youstockit.services.email.EmailSenderDummy;
@@ -14,7 +11,6 @@ import mt.edu.uom.youstockit.supplier.SupplierServerMock;
 
 import java.util.InputMismatchException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
 public class UserInterface
@@ -158,7 +154,7 @@ public class UserInterface
                     }
 
                     // Ask user to choose a supplier
-                    Supplier supplier = chooseSupplier(suppliers);
+                    item.setSupplier(chooseSupplier(suppliers));
 
                     // Ask user for buying and selling prices
                     valid = false;
@@ -177,6 +173,35 @@ public class UserInterface
                     orderingFacade.addItem(item);
                 }
                 break;
+
+                // Delete item from product catalogue
+                case 4:
+                {
+                    // Ask user to input item id
+                    int idToDelete = getIntInput("Input ID of item to delete");
+                    // Try to delete the item with the given ID, and output response message
+                    FacadeResponse response = orderingFacade.deleteItem(idToDelete);
+                    System.out.println(response.message);
+                } break;
+
+                // Place customer order
+                case 5:
+                {
+                    // Ask user to input id of item to order, and quantity
+                    int id = getIntInput("Input ID of item to buy");
+                    int quantity = getIntInput("Input order quantity");
+                    // Try to place the order, and output response message
+                    FacadeResponse response = orderingFacade.placeOrder(id,quantity);
+                    System.out.println(response.message);
+                } break;
+
+                // Calculate profit
+                case 6:
+                {
+                    // Ask user to input id of item to order, and quantity
+                    double totalProfit = orderingFacade.calculateProfit();
+                    System.out.println("Total profit: " + totalProfit);
+                } break;
             }
 
         } while (menuChoice != 7);
@@ -334,6 +359,7 @@ public class UserInterface
         return Math.floor(input * 100.0) / 100.0;
     }
 
+    // Get a string input by the user
     public static String getStringInput(String prompt)
     {
         // Create scanner to get user input

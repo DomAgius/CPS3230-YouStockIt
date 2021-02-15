@@ -83,7 +83,7 @@ public class OrderingFacade
     }
 
     // Calculate profits for current session
-    public double calculateProfits()
+    public double calculateProfit()
     {
         // Get all stock items, both ones that are still available and those that are discontinued
         List<StockItem> items = availableItems.getAll();
