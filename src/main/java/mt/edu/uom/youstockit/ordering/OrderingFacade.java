@@ -55,8 +55,16 @@ public class OrderingFacade
         // If processOrder returns false then the requested quantity is either invalid, or not available in stock
         else
         {
-            return new FacadeResponse(false, "Requested quantity is invalid. Must be between 1 and " +
-                    stockItem.getQuantity() + " (inclusive).");
+            if(stockItem.getQuantity() == 0)
+            {
+                return new FacadeResponse(false, "Requested quantity is invalid. Item is out of " +
+                        "stock.");
+            }
+            else
+            {
+                return new FacadeResponse(false, "Requested quantity is invalid. Must be between 1 " +
+                        "and " + stockItem.getQuantity() + " (inclusive).");
+            }
         }
     }
 

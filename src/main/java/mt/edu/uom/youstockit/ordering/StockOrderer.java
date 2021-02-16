@@ -17,12 +17,8 @@ public class StockOrderer
         this.emailSender = (EmailSender) serviceLocator.findService("EmailSender");
     }
 
-    /**
-     *  Function used to handle stock ordering automatically
-     * @param item Item the order is being placed on
-     * @param buyQuantity How much of the item is being bought in the order
-     * @return True when the amount of requested stock is valid and available and false otherwise
-     */
+    // Function used to handle stock ordering automatically
+    // Note: this function returns true when the amount of requested stock is valid and available and false otherwise
     public boolean processOrder(StockItem item, int buyQuantity)
     {
         int ownedQuantity = item.getQuantity();

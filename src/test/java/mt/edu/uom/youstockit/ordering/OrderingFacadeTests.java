@@ -59,7 +59,7 @@ public class OrderingFacadeTests
     }
 
     @Test
-    public void testPlaceOrderWhenObjectDoesNotExist()
+    public void testPlaceOrderWhenItemDoesNotExist()
     {
         // Setup
         // Set catalogue to fail to return an item
@@ -79,7 +79,7 @@ public class OrderingFacadeTests
     public void testPlaceOrderWhenThereIsNotEnoughStock()
     {
         // Setup
-        // Set catalogue to return an item with a set quantity (so it can be displayed in an error)
+        // Set catalogue to return an item which is in stock
         StockItem stockItem = new StockItem(1);
         stockItem.setQuantity(20);
         when(availableItems.getById(anyInt())).thenReturn(stockItem);
@@ -92,6 +92,26 @@ public class OrderingFacadeTests
         // Verify
         Assertions.assertFalse(response.succeeded);
         String expectedMessage = "Requested quantity is invalid. Must be between 1 and 20 (inclusive).";
+        Assertions.assertEquals(response.message, expectedMessage);
+    }
+
+    @Test
+    public void testPlaceOrderWhenThereItemIsOutOfStock()
+    {
+        // Setup
+        // Set catalogue to return an item with which is out of stock
+        StockItem stockItem = new StockItem(1);
+        stockItem.setQuantity(0);
+        when(availableItems.getById(anyInt())).thenReturn(stockItem);
+        // Set stock orderer to return that the order was not successful (due to insufficient quantity)
+        when(stockOrderer.processOrder(eq(stockItem), anyInt())).thenReturn(false);
+
+        // Exercise
+        FacadeResponse response = orderingFacade.placeOrder(1, 21);
+
+        // Verify
+        Assertions.assertFalse(response.succeeded);
+        String expectedMessage = "Requested quantity is invalid. Item is out of stock.";
         Assertions.assertEquals(response.message, expectedMessage);
     }
 
