@@ -160,9 +160,13 @@ public class OrderingFacadeTests
     }
 
     @Test
-    public void testDeleteItemWhenItemExists()
+    public void testDeleteItemWhenItemIsInStock()
     {
         // Setup
+        // Set product catalogue to return an item which is in stock
+        StockItem stockItem = new StockItem(1);
+        stockItem.setQuantity(20);
+        when(availableItems.getById(eq(1))).thenReturn(stockItem);
         // Set product catalogue to return that product was deleted successfully
         when(availableItems.remove(eq(1))).thenReturn(true);
 
@@ -175,6 +179,28 @@ public class OrderingFacadeTests
         Assertions.assertEquals(response.message, expectedMessage);
         // Check that the method tried to notify the manager via email
         verify(emailSender, times(1)).sendEmailToManager(anyString());
+    }
+
+    @Test
+    public void testDeleteItemWhenItemIsOutOfStock()
+    {
+        // Setup
+        // Set product catalogue to return an item which is out of stock
+        StockItem stockItem = new StockItem(1);
+        stockItem.setQuantity(0);
+        when(availableItems.getById(eq(1))).thenReturn(stockItem);
+        // Set product catalogue to return that product was deleted successfully
+        when(availableItems.remove(eq(1))).thenReturn(true);
+
+        // Exercise
+        FacadeResponse response = orderingFacade.deleteItem(1);
+
+        // Verify
+        Assertions.assertFalse(response.succeeded);
+        String expectedMessage = "Deleted item from catalogue";
+        Assertions.assertEquals(response.message, expectedMessage);
+        // Check that the method did not try to notify the manager via email
+        verify(emailSender, times(0)).sendEmailToManager(anyString());
     }
 
     @Test
@@ -287,5 +313,57 @@ public class OrderingFacadeTests
         // Verify
         // Total profits should be 5 + 10.5 = 15.5
         Assertions.assertEquals(15.5, profits, 0.001);
+    }
+
+    /* The following tests are added for coverage purposes */
+
+    @Test
+    public void testAddItem()
+    {
+        // Setup
+        StockItem stockItem = new StockItem(1);
+
+        // Exercise
+        orderingFacade.addItem(stockItem);
+
+        // Verify
+        // The facade should try to add the item to the catalogue of available items
+        verify(availableItems, times(1)).add(eq(stockItem));
+    }
+
+    @Test
+    public void getAvailableItems()
+    {
+        // Setup
+        // Set catalogue available items to return a list of dummy stock items
+        List<StockItem> items = new ArrayList<>();
+        items.add(new StockItem(1));
+        items.add(new StockItem(2));
+        when(availableItems.getAll()).thenReturn(items);
+
+        // Exercise
+        List<StockItem> returnedItems = orderingFacade.getAvailableItems();
+
+        // Verify
+        // The facade should return a list with the same items
+        Assertions.assertEquals(items, returnedItems);
+    }
+
+    @Test
+    public void getAvailableItemsByCategory()
+    {
+        // Setup
+        // Set catalogue available items to return a list of dummy stock items for the category "Category1"
+        List<StockItem> items = new ArrayList<>();
+        items.add(new StockItem(1));
+        items.add(new StockItem(2));
+        when(availableItems.getByCategory(eq("Category1"))).thenReturn(items);
+
+        // Exercise
+        List<StockItem> returnedItems = orderingFacade.getAvailableItems("Category1");
+
+        // Verify
+        // The facade should return the list of items created while setting up the test
+        Assertions.assertEquals(items, returnedItems);
     }
 }

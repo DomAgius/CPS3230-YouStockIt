@@ -69,17 +69,27 @@ public class OrderingFacade
     // Delete an item from the product catalogue of available items
     public FacadeResponse deleteItem(int id)
     {
-        if(availableItems.remove(id))
-        {
-            // Notify manager via email about deletion
-            emailSender.sendEmailToManager("Item with id " + id + " was deleted from the product catalogue.");
-            return new FacadeResponse(false, "Deleted item from catalogue and notified manager via " +
-                    "email.");
-        }
-        else
+        // Find item to delete
+        StockItem stockItem = availableItems.getById(1);
+
+        // If item is not found, return failure message
+        if(stockItem == null)
         {
             return new FacadeResponse(false, "Stock item with ID " + id + " does not exist.");
         }
+
+        // If the stock item exists, delete it
+        availableItems.remove(id);
+        String responseMessage = "Deleted item from catalogue";
+
+        // If there are items in stock, email the manager about the deletion
+        if(stockItem.getQuantity() > 0)
+        {
+            emailSender.sendEmailToManager("Item with id " + id + " was deleted from the product catalogue.");
+            responseMessage += " and notified manager via email.";
+        }
+
+        return new FacadeResponse(false, responseMessage);
     }
 
     // Calculate profits for current session
