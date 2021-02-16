@@ -212,36 +212,32 @@ public class UserInterface
     public static Supplier[] createSuppliers()
     {
         Supplier[] suppliers = new Supplier[4];
-        // Create four supplier servers each returning a single type of response
-        SupplierServer[] servers = new SupplierServer[4];
+        // Initialise a list of four supplier servers
+        SupplierServerMock[] servers = new SupplierServerMock[4];
+        for (int i = 0; i < servers.length; i++)
+        {
+            servers[i] = new SupplierServerMock();
+        }
 
-        // Create a supplier which always returns a successful response
-        SupplierServerMock server = new SupplierServerMock();
-        server.alwaysReturnSuccessfulResponse();
-        suppliers[0] = new Supplier();
-        suppliers[0].id = 1;
-        suppliers[0].name = "Success supplier";
-        suppliers[0].supplierServer = server;
-        // Create a supplier which always returns a communication error
-        server = new SupplierServerMock();
-        server.addResponse(0, SupplierErrorCode.COMMUNICATION_ERROR);
-        suppliers[1] = new Supplier();
-        suppliers[1].id = 2;
-        suppliers[1].name = "Communication error supplier";
-        suppliers[1].supplierServer = server;
-        // Create a supplier which always returns an item not found error
-        server = new SupplierServerMock();
-        server.addResponse(0, SupplierErrorCode.ITEM_NOT_FOUND);
-        suppliers[2] = new Supplier();
-        suppliers[2].id = 3;
-        suppliers[2].name = "Item not found supplier";
-        suppliers[2].supplierServer = server;
-        // Create a supplier which always returns an out of stock error
-        server.addResponse(10, SupplierErrorCode.OUT_OF_STOCK);
-        suppliers[3] = new Supplier();
-        suppliers[3].id = 4;
-        suppliers[3].name = "Out of stock supplier";
-        suppliers[3].supplierServer = new SupplierServerMock();
+        // Create a supplier server which always returns a successful response
+        servers[0].alwaysReturnSuccessfulResponse();
+        // Create a supplier server which always returns a communication error
+        servers[1].addResponse(0, SupplierErrorCode.COMMUNICATION_ERROR);
+        // Create a supplier server which always returns an item not found error
+        servers[2].addResponse(0, SupplierErrorCode.ITEM_NOT_FOUND);
+        // Create a supplier server which always returns an out of stock error
+        servers[3].addResponse(10, SupplierErrorCode.OUT_OF_STOCK);
+
+        // Initialize four suppliers from the created servers
+        String[] supplierNames = {"Success supplier", "Communication error supplier", "Item not found supplier",
+                        "Out of stock supplier"};
+        for(int i = 0; i < servers.length; i++)
+        {
+            suppliers[i] = new Supplier();
+            suppliers[i].id = 1;
+            suppliers[i].name = supplierNames[i];
+            suppliers[i].supplierServer = servers[i];
+        }
 
         return suppliers;
     }
