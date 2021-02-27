@@ -70,9 +70,7 @@ public class StockOrderer
                             Thread.sleep(5000);
                         } catch (InterruptedException e)
                         {
-                            // If waiting fails, send an email to the manager to notify them about failure and abort
-                            emailSender.sendEmailToManager("YouStockIt failed to retry ordering of stock item \"" +
-                                    item.getName() + "\" with id " + item.getId());
+                            // If waiting fails, abort order
                             retry = false;
                         }
                     }
